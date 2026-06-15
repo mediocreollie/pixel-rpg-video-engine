@@ -68,7 +68,11 @@ The gym is also an interior, but it should remain second priority until Pub Frie
 
 ## Ranked Next 10 Visual Improvements
 
-### 1. Pub Interior Density Pack
+### 1. Pub Interior Density Pack - Complete
+
+Status:
+
+Complete. Implemented in `public/locations/pub.json` with additional shelf bands, bottle shapes, warm wall accents, tap-like bar details, stools, crate-like clutter, and extra beer density.
 
 Why it matters:
 
@@ -76,11 +80,11 @@ Pub Friend is the MVP recording loop, and the pub is where the visual punchline 
 
 Expected visual gain:
 
-High. Adding stools, shelves, taps, wall signs, drink clusters, and small table variation would make the pub read as a real place instead of a warm prototype room.
+High. Adding stools, shelves, taps, wall signs, drink clusters, and small table variation makes the pub read more like a real place instead of a warm prototype room.
 
 Estimated difficulty:
 
-Medium. Most work can be done through existing prop kinds or new JSON-driven prop definitions, but final polish may later need actual pixel assets.
+Medium. This pass stayed JSON-driven and placeholder-friendly.
 
 ### 2. Pub Punchline Composition Pass
 
@@ -210,7 +214,7 @@ Low for planning, medium for implementation. The next step is to define the voca
 
 ## Recommended Order
 
-1. Pub Interior Density Pack
+1. Pub Interior Density Pack - complete
 2. Pub Punchline Composition Pass
 3. Town Route Readability Pack
 4. Replace Text-Label Dependence With Silhouettes
@@ -223,11 +227,6 @@ Low for planning, medium for implementation. The next step is to define the voca
 
 ## Next Practical Step
 
-Start with the Pub Interior Density Pack as a JSON-first planning task. Define the exact pub props and placements needed to make one screenshot of the pub communicate:
-
-- it is a pub
-- it is warm and lived in
-- the beer quantity is absurd
-- the environment, not the character, delivers the joke
+Move to the Pub Punchline Composition Pass. The pub now has more lived-in interior dressing, so the next improvement should stage the absurd beer quantity more clearly in the reveal area.
 
 Do not begin beach, gym, or character polish until the Pub Friend route and pub reveal pass the screenshot test.
