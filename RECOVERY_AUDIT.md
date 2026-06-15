@@ -22,6 +22,16 @@ Verified repository details:
 - Visibility: public
 - Connector permissions include read and write access.
 
+## CI Validation
+
+A minimal GitHub Actions workflow has been added at `.github/workflows/validate.yml`.
+
+It runs on `push` and `pull_request` using Node 22, then runs:
+
+1. `npm install`
+2. `npm run validate-content`
+3. `npm run build`
+
 ## Requested Command Checks
 
 The user requested these commands be run using the GitHub repo directly, not the local Windows workspace:
@@ -30,32 +40,24 @@ The user requested these commands be run using the GitHub repo directly, not the
 - `npm run validate-content`
 - `npm run build`
 
-Result: not executed.
+Result: pending CI run.
 
 Reason:
 
-- The GitHub connector can inspect and edit repository files, but it does not provide a remote shell runner.
-- No existing GitHub Actions workflow was found at:
-  - `.github/workflows/ci.yml`
-  - `.github/workflows/ci.yaml`
-  - `.github/workflows/build.yml`
-- Because no remote runner is available from the current toolset, the npm commands could not be truthfully executed without using the local Windows workspace, which the user explicitly prohibited.
+- The GitHub Actions workflow now provides a GitHub-hosted execution path for these checks.
+- The workflow was added after the original audit, so the audit should be updated again once the first CI run result is available.
 
 ## Validation Result
 
-Status: not verified.
+Status: pending CI run.
 
-`npm run validate-content` was not run because there is currently no available GitHub-hosted execution path in this session.
-
-No validation failure was observed, but no successful validation result exists from this audit.
+`npm run validate-content` is now covered by `.github/workflows/validate.yml`, but this audit has not yet recorded a completed workflow result.
 
 ## Build Result
 
-Status: not verified.
+Status: pending CI run.
 
-`npm run build` was not run because there is currently no available GitHub-hosted execution path in this session.
-
-No build failure was observed, but no successful build result exists from this audit.
+`npm run build` is now covered by `.github/workflows/validate.yml`, but this audit has not yet recorded a completed workflow result.
 
 ## Tracking Check: node_modules
 
@@ -141,33 +143,17 @@ Verified dependencies:
 
 ## Critical Issues Found
 
-No critical build or validation issue was proven, because the build and validation commands were not executed.
+No critical build or validation issue has been proven yet, because the first CI result has not been recorded in this audit.
 
 No tracking problem was found for root `node_modules/` or root `dist/`.
 
 ## Warnings
 
-- The audit still needs a real remote execution result for `npm install`, `npm run validate-content`, and `npm run build`.
-- There is no existing GitHub Actions workflow available to run the requested checks remotely.
+- The audit still needs the first completed GitHub Actions result for `npm install`, `npm run validate-content`, and `npm run build`.
 - Recursive `references/` listing is still incomplete with the current connector tools.
-- `vite` may require a modern Node version depending on the resolved lockfile version, so the eventual runner should use Node 20.19+ or Node 22.12+.
 
 ## Next Recommended Fix
 
-Add a minimal GitHub Actions workflow for CI, then run it on `main` to verify:
+Wait for the new `Validate` GitHub Actions workflow to run on `main`, then update this audit with the exact validation and build result.
 
-1. `npm install`
-2. `npm run validate-content`
-3. `npm run build`
-
-Recommended runner setup:
-
-- `ubuntu-latest`
-- Node `22`
-- `npm install`
-- `npm run validate-content`
-- `npm run build`
-
-This is the safest next step because it satisfies the user's requirement to avoid the local Windows workspace while producing real validation and build evidence from GitHub.
-
-Do not add features, visuals, or architecture changes until the remote CI result is known.
+If CI fails, fix only the critical validation or build issue shown by the workflow logs. Do not add features, visuals, or architecture changes until CI is green.
