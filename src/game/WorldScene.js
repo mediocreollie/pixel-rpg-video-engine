@@ -3,7 +3,7 @@ import { DialogueBox } from './ui/DialogueBox.js';
 
 const TILE_SIZE = 16;
 const FALLBACK_COLOR = '#111827';
-const CAMERA_ZOOM = 3;
+const CAMERA_ZOOM = 2.35;
 const CAMERA_LERP = 0.12;
 const FALLBACK_LOCATION = {
   id: 'fallback',
@@ -128,6 +128,8 @@ export class WorldScene extends Phaser.Scene {
         this.ground.fillStyle(toColor(def.color), 1);
         this.ground.fillRect(worldX, worldY, TILE_SIZE, TILE_SIZE);
 
+        this.drawTileTexture(worldX, worldY, def, x, y);
+
         if (def.decoration === 'water') {
           this.ground.fillStyle(0x60a5fa, 0.45);
           this.ground.fillRect(worldX + 2, worldY + 2, TILE_SIZE - 4, TILE_SIZE - 4);
@@ -147,6 +149,31 @@ export class WorldScene extends Phaser.Scene {
       .forEach((exit) => this.createExit(exit));
 
     this.physics.world.setBounds(0, 0, width, height);
+  }
+
+  drawTileTexture(worldX, worldY, def, tileX, tileY) {
+    if (def.texture === 'pub-floor') {
+      const lineColor = toColor(def.lineColor || '#7c2d12');
+      const highlightColor = toColor(def.highlightColor || '#a16207');
+
+      this.ground.fillStyle(highlightColor, (tileX + tileY) % 2 === 0 ? 0.12 : 0.06);
+      this.ground.fillRect(worldX + 1, worldY + 1, TILE_SIZE - 2, 2);
+      this.ground.lineStyle(1, lineColor, 0.35);
+      this.ground.lineBetween(worldX, worldY + 7, worldX + TILE_SIZE, worldY + 7);
+      this.ground.lineStyle(1, lineColor, 0.2);
+      this.ground.lineBetween(worldX + 8, worldY, worldX + 8, worldY + TILE_SIZE);
+      return;
+    }
+
+    if (def.texture === 'pub-wall') {
+      const lineColor = toColor(def.lineColor || '#111827');
+      const highlightColor = toColor(def.highlightColor || '#78350f');
+
+      this.ground.fillStyle(highlightColor, 0.18);
+      this.ground.fillRect(worldX + 2, worldY + 2, TILE_SIZE - 4, 2);
+      this.ground.lineStyle(1, lineColor, 0.25);
+      this.ground.lineBetween(worldX, worldY + 8, worldX + TILE_SIZE, worldY + 8);
+    }
   }
 
   isExitEnabled(exit) {
@@ -206,13 +233,13 @@ export class WorldScene extends Phaser.Scene {
       return;
     }
 
-    const sprite = this.add.rectangle(x, y, prop.width || 12, prop.height || 12, toColor(prop.color || '#ffffff'));
+    const sprite = this.add.rectangle(x, y, prop.width || 8, prop.height || 8, toColor(prop.color || '#ffffff'));
     sprite.setStrokeStyle(1, toColor(prop.outline || '#111827'));
 
     if (prop.label) {
-      this.add.text(x, y + 10, prop.label, {
+      this.add.text(x, y + (prop.height || 8) / 2 + 2, prop.label, {
         fontFamily: 'monospace',
-        fontSize: '5px',
+        fontSize: '4px',
         color: prop.labelColor || '#111827'
       }).setOrigin(0.5, 0);
     }
@@ -224,31 +251,37 @@ export class WorldScene extends Phaser.Scene {
     const foamColor = toColor('#fef3c7');
     const outlineColor = toColor(prop.outline || '#78350f');
 
-    mug.add(this.add.rectangle(0, 2, 8, 10, glassColor).setStrokeStyle(1, outlineColor));
-    mug.add(this.add.rectangle(0, -4, 9, 3, foamColor));
-    mug.add(this.add.rectangle(5, 2, 3, 6, 0x000000, 0).setStrokeStyle(1, foamColor));
-    mug.add(this.add.rectangle(-2, 2, 1, 7, 0xfde68a, 0.65));
+    mug.add(this.add.rectangle(0, 1, 4, 6, glassColor).setStrokeStyle(1, outlineColor));
+    mug.add(this.add.rectangle(0, -3, 5, 2, foamColor));
+    mug.add(this.add.rectangle(3, 1, 2, 4, 0x000000, 0).setStrokeStyle(1, foamColor));
+    mug.add(this.add.rectangle(-1, 1, 1, 4, 0xfde68a, 0.55));
   }
 
   createTableProp(x, y, prop) {
     const table = this.add.container(x, y);
     const topColor = toColor(prop.color || '#451a03');
     const outlineColor = toColor(prop.outline || '#facc15');
+    const width = prop.width || 18;
+    const height = prop.height || 12;
 
-    table.add(this.add.rectangle(0, 0, prop.width || 30, prop.height || 18, topColor).setStrokeStyle(1, outlineColor));
-    table.add(this.add.rectangle(-9, -7, 6, 4, 0xf59e0b).setStrokeStyle(1, 0x78350f));
-    table.add(this.add.rectangle(8, 6, 6, 4, 0xf59e0b).setStrokeStyle(1, 0x78350f));
+    table.add(this.add.rectangle(0, 0, width, height, topColor).setStrokeStyle(1, outlineColor));
+    table.add(this.add.rectangle(-width / 4, -height / 4, 3, 2, 0xf59e0b).setStrokeStyle(1, 0x78350f));
+    table.add(this.add.rectangle(width / 4, height / 4, 3, 2, 0xf59e0b).setStrokeStyle(1, 0x78350f));
   }
 
   createBarProp(x, y, prop) {
     const bar = this.add.container(x, y);
     const barColor = toColor(prop.color || '#78350f');
     const outlineColor = toColor(prop.outline || '#422006');
+    const width = prop.width || 76;
+    const height = prop.height || 8;
 
-    bar.add(this.add.rectangle(0, 0, prop.width || 108, prop.height || 14, barColor).setStrokeStyle(1, outlineColor));
-    bar.add(this.add.rectangle(0, -5, prop.width || 108, 3, 0xfacc15, 0.75));
-    [-36, -20, -4, 12, 28, 44].forEach((offset) => {
-      bar.add(this.add.rectangle(offset, 1, 5, 8, 0xf59e0b).setStrokeStyle(1, 0x78350f));
+    bar.add(this.add.rectangle(0, 0, width, height, barColor).setStrokeStyle(1, outlineColor));
+    bar.add(this.add.rectangle(0, -height / 2 + 1, width, 2, 0xfacc15, 0.55));
+    [-28, -16, -4, 8, 20, 32].forEach((offset) => {
+      if (Math.abs(offset) < width / 2 - 3) {
+        bar.add(this.add.rectangle(offset, 1, 3, 5, 0xf59e0b).setStrokeStyle(1, 0x78350f));
+      }
     });
   }
 
@@ -257,16 +290,16 @@ export class WorldScene extends Phaser.Scene {
     const doorColor = toColor(prop.color || '#facc15');
     const outlineColor = toColor(prop.outline || '#713f12');
 
-    door.add(this.add.rectangle(0, 0, prop.width || 12, prop.height || 15, doorColor).setStrokeStyle(1, outlineColor));
-    door.add(this.add.rectangle(3, 1, 2, 2, 0x713f12));
+    door.add(this.add.rectangle(0, 0, prop.width || 8, prop.height || 11, doorColor).setStrokeStyle(1, outlineColor));
+    door.add(this.add.rectangle(2, 1, 1, 1, 0x713f12));
   }
 
   createPlayer() {
     const spawn = this.getSpawnPoint(this.spawnPoint || this.locationData.playerSpawnPoint || 'default');
     this.player = this.add.container(spawn.x * TILE_SIZE + 8, spawn.y * TILE_SIZE + 8);
     this.physics.add.existing(this.player);
-    this.player.body.setSize(10, 10);
-    this.player.body.setOffset(-5, -1);
+    this.player.body.setSize(7, 7);
+    this.player.body.setOffset(-3.5, -1);
     this.player.setData('speed', this.sceneData.playerSpeed || 72);
     this.drawPixelPerson(this.player, '#3b82f6', '#f8fafc');
 
@@ -298,8 +331,8 @@ export class WorldScene extends Phaser.Scene {
       this.physics.add.existing(npc);
       npc.actorId = actorId;
       npc.name = character.name;
-      npc.body.setSize(10, 10);
-      npc.body.setOffset(-5, -1);
+      npc.body.setSize(7, 7);
+      npc.body.setOffset(-3.5, -1);
       npc.setData('speed', character.movementSpeed || 46);
       this.drawPixelPerson(npc, character.sprite?.shirtColor || '#ef4444', character.sprite?.faceColor || '#fde68a');
 
@@ -517,7 +550,7 @@ export class WorldScene extends Phaser.Scene {
           text: 'Missing scene data.'
         },
         camera: {
-          zoom: 3
+          zoom: 2.35
         }
       };
     }
@@ -676,11 +709,11 @@ export class WorldScene extends Phaser.Scene {
   }
 
   drawPixelPerson(container, shirtColor, faceColor) {
-    container.add(this.add.rectangle(0, -5, 8, 7, toColor(faceColor)));
-    container.add(this.add.rectangle(0, 2, 10, 10, toColor(shirtColor)));
-    container.add(this.add.rectangle(-3, 8, 3, 4, toColor('#1f2937')));
-    container.add(this.add.rectangle(3, 8, 3, 4, toColor('#1f2937')));
-    container.add(this.add.rectangle(-2, -6, 1, 1, toColor('#111827')));
-    container.add(this.add.rectangle(2, -6, 1, 1, toColor('#111827')));
+    container.add(this.add.rectangle(0, -3, 5, 4, toColor(faceColor)));
+    container.add(this.add.rectangle(0, 1, 6, 6, toColor(shirtColor)));
+    container.add(this.add.rectangle(-2, 5, 2, 3, toColor('#1f2937')));
+    container.add(this.add.rectangle(2, 5, 2, 3, toColor('#1f2937')));
+    container.add(this.add.rectangle(-1, -4, 1, 1, toColor('#111827')));
+    container.add(this.add.rectangle(1, -4, 1, 1, toColor('#111827')));
   }
 }
