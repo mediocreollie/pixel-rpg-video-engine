@@ -15,7 +15,7 @@
 - Jack's scripted path leads along the road toward the pub door.
 - The pub door exit points to the `pub` location.
 - Entering the pub switches to `public/locations/pub.json`.
-- The pub interior has placeholder bar, table, and beer props for the punchline.
+- The pub interior has placeholder bar, table, beer, shelf, stool, wall sign, light, and crate-like prop dressing for the punchline.
 - The camera remains player-follow only and is constrained to the active map bounds.
 - `Escape` returns from gameplay to the scene selector.
 - `R` restarts the current gameplay scene while gameplay is active.
@@ -40,6 +40,24 @@ Visual problem solved:
 
 The main Pub Friend punchline now reads more visually and less textually. This matters because short-form video viewers should understand the pub reveal quickly, especially in 9:16 recording mode.
 
+## Pub Interior Density Pass
+
+Completed visual improvement #1 from `NEXT_VISUAL_PASS.md`.
+
+What changed:
+
+- Added visible shelf bands behind the bar.
+- Added small bottle shapes on the shelves.
+- Added warm wall sign/light blocks on both sides of the pub.
+- Added rows of tap-like bar details.
+- Added stools around both tables.
+- Added crate-like stacked props near the right side of the pub.
+- Added a little more beer density near the reveal area.
+
+Visual effect:
+
+The pub interior should now feel busier, warmer, and more lived in while still using placeholder-friendly JSON props. The scene is closer to the art direction because the environment carries more of the pub identity before dialogue explains it.
+
 ## Untested Due To Sandbox Command Issue
 
 The local command runner is still blocked before npm can start with:
@@ -48,13 +66,15 @@ The local command runner is still blocked before npm can start with:
 helper_unknown_error: apply deny-read ACLs
 ```
 
-Because of that, these have not been verified by command execution in this session:
+Because of that, these have not been verified by local command execution in this session:
 
 - `npm run validate-content`
 - `npm run build`
 - Browser/manual Phaser runtime behaviour
 - Actual keyboard feel in the canvas
 - Exact camera framing in 9:16 mode
+
+GitHub Actions validation/build has been added separately through `.github/workflows/validate.yml`.
 
 ## Manual Test Checklist
 
@@ -82,13 +102,16 @@ Because of that, these have not been verified by command execution in this sessi
 22. Walk into the highlighted pub door.
 23. Confirm the pub interior loads.
 24. Confirm the beer punchline is visually obvious.
-25. Press `Escape` and confirm the scene selector returns.
-26. Start Pub Friend again and confirm the scene still loads.
-27. Start Pub Friend, press `R`, and confirm the scene restarts.
-28. Press `H` and confirm the recording overlay hides/shows.
-29. Press `?` and confirm the controls screen opens.
-30. Toggle 9:16 canvas mode and repeat the key checks for readability.
+25. Confirm the pub now has visible shelves, stools, wall accents, bar details, and crate-like clutter.
+26. Press `Escape` and confirm the scene selector returns.
+27. Start Pub Friend again and confirm the scene still loads.
+28. Start Pub Friend, press `R`, and confirm the scene restarts.
+29. Press `H` and confirm the recording overlay hides/shows.
+30. Press `?` and confirm the controls screen opens.
+31. Toggle 9:16 canvas mode and repeat the key checks for readability.
 
 ## Next Recommended Task
 
-Run the manual checklist above, then fix only the issues found in the Pub Friend loop before expanding beach or gym content.
+Run the manual checklist above, then fix only issues found in the Pub Friend loop before expanding beach or gym content.
+
+The next visual pass should be `Pub Punchline Composition Pass` from `NEXT_VISUAL_PASS.md`.
