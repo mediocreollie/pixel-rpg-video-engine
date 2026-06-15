@@ -1,0 +1,50 @@
+{
+  "$schema": "../schemas/scene.schema.json",
+  "id": "pub",
+  "title": "Pub Friend",
+  "description": "Current MVP test: talk to Jack, follow him through town, enter the pub, and reveal the beer punchline.",
+  "startingLocation": "town",
+  "destinationLocation": "pub",
+  "revealSoundPath": "",
+  "transitionSoundPath": "",
+  "participatingCharacters": [
+    {
+      "id": "jack",
+      "character": "friend-jack",
+      "spawnPoint": "townCenter"
+    }
+  ],
+  "dialogueSequence": [
+    {
+      "speaker": "jack",
+      "text": "Ollie, we need to go to the pub."
+    }
+  ],
+  "scriptedMovements": [
+    {
+      "actor": "jack",
+      "trigger": "afterDialogue",
+      "path": [
+        { "x": 9, "y": 6 },
+        { "x": 11, "y": 6 },
+        { "x": 13, "y": 6 },
+        { "x": 14, "y": 5 },
+        { "x": 14, "y": 4 }
+      ]
+    }
+  ],
+  "punchlineReveal": {
+    "text": "A totally reasonable amount of beer.",
+    "color": "#fef3c7"
+  },
+  "titleCard": {
+    "showOnStart": true,
+    "title": "Ollie's Big Mission",
+    "subtitle": "A normal walk to a completely normal pub",
+    "duration": 2400,
+    "background": "#111827",
+    "alpha": 0.9,
+    "color": "#f8fafc",
+    "subtitleColor": "#fde68a"
+  }
+}

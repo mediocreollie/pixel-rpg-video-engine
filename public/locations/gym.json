@@ -1,0 +1,40 @@
+{
+  "$schema": "../schemas/location.schema.json",
+  "id": "gym",
+  "mapName": "Gym",
+  "background": "#7f1d1d",
+  "musicPath": "",
+  "ambiencePath": "",
+  "playerSpawnPoint": "door",
+  "playerSpawns": {
+    "door": { "x": 4, "y": 7 }
+  },
+  "npcSpawnPoints": {},
+  "map": {
+    "legend": {
+      ".": { "color": "#b91c1c" },
+      "#": { "color": "#1f2937", "blocked": true },
+      "m": { "color": "#9ca3af" }
+    },
+    "tiles": [
+      "####################",
+      "#..................#",
+      "#..mmmmmmmmmmmmmm..#",
+      "#..................#",
+      "#..mmmmmmmmmmmmmm..#",
+      "#..................#",
+      "#..mmmmmmmmmmmmmm..#",
+      "#..................#",
+      "#..mmmmmmmmmmmmmm..#",
+      "#..................#",
+      "####################"
+    ]
+  },
+  "exits": [],
+  "props": [
+    { "x": 5, "y": 2, "width": 22, "height": 8, "color": "#d1d5db", "outline": "#374151", "label": "BENCH" },
+    { "x": 9, "y": 4, "width": 28, "height": 9, "color": "#111827", "outline": "#f8fafc", "label": "WEIGHTS" },
+    { "x": 14, "y": 6, "width": 24, "height": 14, "color": "#6b7280", "outline": "#111827", "label": "MORE" },
+    { "x": 16, "y": 8, "width": 28, "height": 12, "color": "#6b7280", "outline": "#111827", "label": "MORE" }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "startScene": "pub",
+  "scenes": [
+    {
+      "id": "pub",
+      "file": "/scenes/pub.json"
+    },
+    {
+      "id": "beach",
+      "file": "/scenes/beach.json"
+    },
+    {
+      "id": "gym",
+      "file": "/scenes/gym.json"
+    }
+  ],
+  "characters": [
+    {
+      "id": "friend-jack",
+      "file": "/characters/friend-jack.json"
+    },
+    {
+      "id": "beth",
+      "file": "/characters/beth.json"
+    },
+    {
+      "id": "gym-friend",
+      "file": "/characters/gym-friend.json"
+    }
+  ],
+  "locations": [
+    {
+      "id": "town",
+      "file": "/locations/town.json"
+    },
+    {
+      "id": "pub",
+      "file": "/locations/pub.json"
+    },
+    {
+      "id": "beach",
+      "file": "/locations/beach.json"
+    },
+    {
+      "id": "gym",
+      "file": "/locations/gym.json"
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "scene.schema.json",
+  "title": "Scene",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "startingLocation",
+    "participatingCharacters",
+    "dialogueSequence",
+    "scriptedMovements",
+    "destinationLocation",
+    "punchlineReveal"
+  ],
+  "properties": {
+    "id": { "type": "string" },
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "startingLocation": { "type": "string" },
+    "destinationLocation": { "type": "string" },
+    "revealSoundPath": { "type": "string" },
+    "transitionSoundPath": { "type": "string" },
+    "participatingCharacters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "character", "spawnPoint"],
+        "properties": {
+          "id": { "type": "string" },
+          "character": { "type": "string" },
+          "spawnPoint": { "type": "string" }
+        }
+      }
+    },
+    "dialogueSequence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["speaker", "text"],
+        "properties": {
+          "speaker": { "type": "string" },
+          "text": { "type": "string" }
+        }
+      }
+    },
+    "scriptedMovements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["actor", "trigger", "path"],
+        "properties": {
+          "actor": { "type": "string" },
+          "trigger": { "type": "string" },
+          "path": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["x", "y"],
+              "properties": {
+                "x": { "type": "number" },
+                "y": { "type": "number" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "punchlineReveal": {
+      "type": "object",
+      "required": ["text"],
+      "properties": {
+        "text": { "type": "string" },
+        "color": { "type": "string" }
+      }
+    },
+    "titleCard": {
+      "type": "object",
+      "properties": {
+        "showOnStart": { "type": "boolean" },
+        "title": { "type": "string" },
+        "subtitle": { "type": "string" },
+        "duration": { "type": "number" },
+        "background": { "type": "string" },
+        "alpha": { "type": "number" },
+        "color": { "type": "string" },
+        "subtitleColor": { "type": "string" }
+      }
+    }
+  }
+}

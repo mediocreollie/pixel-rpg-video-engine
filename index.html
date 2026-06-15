@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pixel RPG Video Engine</title>
+  </head>
+  <body>
+    <div class="app-shell">
+      <div id="game"></div>
+      <div id="recording-overlay" class="recording-overlay">
+        <div>
+          <span>Scene</span>
+          <strong id="overlay-scene">Loading</strong>
+        </div>
+        <div>
+          <span>Location</span>
+          <strong id="overlay-location">Loading</strong>
+        </div>
+        <div class="overlay-keys">WASD / Arrows move · Space / Enter talk · R reset · T title · H overlay · F fullscreen · ? controls</div>
+      </div>
+      <div id="debug-ui" class="debug-ui">
+        <button id="start-reset" type="button">Restart Scene</button>
+        <button id="toggle-frame" type="button">Use 9:16 Canvas</button>
+        <button id="toggle-title" type="button">Replay Title Card</button>
+        <button id="hide-debug" type="button">Hide Overlay</button>
+      </div>
+      <button id="help-button" class="help-button" type="button" aria-label="Show controls">?</button>
+      <div id="controls-screen" class="controls-screen" hidden>
+        <div class="controls-panel" role="dialog" aria-modal="true" aria-labelledby="controls-title">
+          <button id="close-controls" class="close-controls" type="button" aria-label="Close controls">×</button>
+          <h1 id="controls-title">Controls</h1>
+          <section>
+            <h2>Movement</h2>
+            <p>WASD</p>
+            <p>Arrow Keys</p>
+          </section>
+          <section>
+            <h2>Scene Controls</h2>
+            <p>R = Restart Scene</p>
+            <p>T = Replay Title Card</p>
+            <p>H = Hide/Show Recording Overlay</p>
+            <p>F = Fullscreen</p>
+            <p>? = Show This Screen</p>
+          </section>
+          <section>
+            <h2>Future Controls</h2>
+            <p>Reserved for future features</p>
+          </section>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

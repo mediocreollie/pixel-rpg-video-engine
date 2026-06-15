@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "location.schema.json",
+  "title": "Location",
+  "type": "object",
+  "required": ["id", "mapName", "exits", "props", "npcSpawnPoints", "map"],
+  "properties": {
+    "id": { "type": "string" },
+    "mapName": { "type": "string" },
+    "background": { "type": "string" },
+    "musicPath": { "type": "string" },
+    "ambiencePath": { "type": "string" },
+    "playerSpawnPoint": { "type": "string" },
+    "playerSpawns": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["x", "y"],
+        "properties": {
+          "x": { "type": "number" },
+          "y": { "type": "number" }
+        }
+      }
+    },
+    "exits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "x", "y", "targetLocation"],
+        "properties": {
+          "id": { "type": "string" },
+          "x": { "type": "number" },
+          "y": { "type": "number" },
+          "targetLocation": { "type": "string" },
+          "spawnPoint": { "type": "string" },
+          "width": { "type": "number" },
+          "height": { "type": "number" }
+        }
+      }
+    },
+    "props": {
+      "type": "array",
+      "items": { "type": "object" }
+    },
+    "npcSpawnPoints": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["x", "y"],
+        "properties": {
+          "x": { "type": "number" },
+          "y": { "type": "number" }
+        }
+      }
+    },
+    "map": {
+      "type": "object",
+      "required": ["legend", "tiles"],
+      "properties": {
+        "legend": { "type": "object" },
+        "tiles": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

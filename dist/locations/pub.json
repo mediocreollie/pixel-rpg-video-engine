@@ -1,0 +1,59 @@
+{
+  "$schema": "../schemas/location.schema.json",
+  "id": "pub",
+  "mapName": "Pub",
+  "background": "#451a03",
+  "musicPath": "",
+  "ambiencePath": "",
+  "playerSpawnPoint": "door",
+  "playerSpawns": {
+    "door": { "x": 5, "y": 7 }
+  },
+  "npcSpawnPoints": {},
+  "map": {
+    "legend": {
+      ".": { "color": "#92400e" },
+      "#": { "color": "#1f2937", "blocked": true },
+      "b": { "color": "#facc15" },
+      "t": { "color": "#78350f", "blocked": true }
+    },
+    "tiles": [
+      "####################",
+      "#..................#",
+      "#..bbbbbbbbbbbbbb..#",
+      "#..bbbbbbbbbbbbbb..#",
+      "#..................#",
+      "#..ttt....ttt......#",
+      "#..ttt....ttt......#",
+      "#..................#",
+      "#..bbbbbbbbbbbbbb..#",
+      "#..................#",
+      "####################"
+    ]
+  },
+  "exits": [],
+  "props": [
+    { "x": 10, "y": 1, "width": 120, "height": 12, "color": "#451a03", "outline": "#facc15", "label": "THE PUB" },
+    { "x": 10, "y": 4, "width": 108, "height": 12, "color": "#78350f", "outline": "#422006", "label": "BAR" },
+    { "x": 4, "y": 5, "width": 30, "height": 24, "color": "#451a03", "outline": "#facc15", "label": "TABLE" },
+    { "x": 10, "y": 5, "width": 30, "height": 24, "color": "#451a03", "outline": "#facc15", "label": "TABLE" },
+    { "x": 4, "y": 2, "width": 7, "height": 12, "color": "#f59e0b", "outline": "#78350f", "label": "BEER" },
+    { "x": 6, "y": 2, "width": 7, "height": 12, "color": "#f59e0b", "outline": "#78350f", "label": "BEER" },
+    { "x": 8, "y": 2, "width": 7, "height": 12, "color": "#f59e0b", "outline": "#78350f", "label": "BEER" },
+    { "x": 10, "y": 2, "width": 7, "height": 12, "color": "#f59e0b", "outline": "#78350f", "label": "BEER" },
+    { "x": 12, "y": 2, "width": 7, "height": 12, "color": "#f59e0b", "outline": "#78350f", "label": "BEER" },
+    { "x": 14, "y": 2, "width": 7, "height": 12, "color": "#f59e0b", "outline": "#78350f", "label": "BEER" },
+    { "x": 5, "y": 5, "width": 7, "height": 12, "color": "#f59e0b", "outline": "#78350f", "label": "BEER" },
+    { "x": 7, "y": 5, "width": 7, "height": 12, "color": "#f59e0b", "outline": "#78350f", "label": "BEER" },
+    { "x": 9, "y": 5, "width": 7, "height": 12, "color": "#f59e0b", "outline": "#78350f", "label": "BEER" },
+    { "x": 11, "y": 5, "width": 7, "height": 12, "color": "#f59e0b", "outline": "#78350f", "label": "BEER" },
+    { "x": 13, "y": 5, "width": 7, "height": 12, "color": "#f59e0b", "outline": "#78350f", "label": "BEER" },
+    { "x": 15, "y": 5, "width": 7, "height": 12, "color": "#f59e0b", "outline": "#78350f", "label": "BEER" },
+    { "x": 4, "y": 8, "width": 7, "height": 12, "color": "#f59e0b", "outline": "#78350f", "label": "BEER" },
+    { "x": 6, "y": 8, "width": 7, "height": 12, "color": "#f59e0b", "outline": "#78350f", "label": "BEER" },
+    { "x": 8, "y": 8, "width": 7, "height": 12, "color": "#f59e0b", "outline": "#78350f", "label": "BEER" },
+    { "x": 10, "y": 8, "width": 7, "height": 12, "color": "#f59e0b", "outline": "#78350f", "label": "BEER" },
+    { "x": 12, "y": 8, "width": 7, "height": 12, "color": "#f59e0b", "outline": "#78350f", "label": "BEER" },
+    { "x": 14, "y": 8, "width": 7, "height": 12, "color": "#f59e0b", "outline": "#78350f", "label": "BEER" }
+  ]
+}

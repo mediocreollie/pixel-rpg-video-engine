@@ -1,0 +1,75 @@
+{
+  "$schema": "../schemas/location.schema.json",
+  "id": "town",
+  "mapName": "Town",
+  "background": "#7dd3fc",
+  "musicPath": "",
+  "ambiencePath": "",
+  "playerSpawnPoint": "default",
+  "playerSpawns": {
+    "default": { "x": 4, "y": 6 }
+  },
+  "npcSpawnPoints": {
+    "townCenter": { "x": 7, "y": 6 }
+  },
+  "map": {
+    "legend": {
+      ".": { "color": "#86efac" },
+      "#": { "color": "#374151", "blocked": true },
+      "w": { "color": "#38bdf8", "blocked": true, "decoration": "water" },
+      "r": { "color": "#d6d3d1" },
+      "d": { "color": "#facc15" }
+    },
+    "tiles": [
+      "########################",
+      "#......................#",
+      "#..wwwww...............#",
+      "#..wwwww.....###.......#",
+      "#............#d#.......#",
+      "#............#r#.......#",
+      "#....rrrrrrrrrr........#",
+      "#....r.................#",
+      "#......................#",
+      "#......................#",
+      "#......rrrr............#",
+      "#......r..r............#",
+      "#......................#",
+      "#......................#",
+      "########################"
+    ]
+  },
+  "exits": [
+    {
+      "id": "pubDoor",
+      "x": 14,
+      "y": 4,
+      "targetLocation": "pub",
+      "spawnPoint": "door",
+      "color": "#facc15",
+      "alpha": 0.75
+    },
+    {
+      "id": "beachPath",
+      "x": 3,
+      "y": 8,
+      "targetLocation": "beach",
+      "spawnPoint": "path"
+    },
+    {
+      "id": "gymDoor",
+      "x": 20,
+      "y": 10,
+      "targetLocation": "gym",
+      "spawnPoint": "door"
+    }
+  ],
+  "props": [
+    { "x": 14, "y": 3, "width": 46, "height": 16, "color": "#7c2d12", "outline": "#422006", "label": "PUB" },
+    { "x": 14, "y": 4, "width": 12, "height": 15, "color": "#facc15", "outline": "#713f12", "label": "DOOR" },
+    { "x": 10, "y": 6, "width": 64, "height": 8, "color": "#d6d3d1", "outline": "#a8a29e", "label": "ROAD" },
+    { "x": 20, "y": 9, "width": 30, "height": 16, "color": "#991b1b", "outline": "#450a0a", "label": "GYM" },
+    { "x": 3, "y": 8, "width": 18, "height": 10, "color": "#fde68a", "outline": "#92400e", "label": "BEACH" },
+    { "x": 6, "y": 8, "width": 9, "height": 14, "color": "#166534" },
+    { "x": 8, "y": 7, "width": 9, "height": 14, "color": "#166534" }
+  ]
+}

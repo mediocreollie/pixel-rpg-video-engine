@@ -1,0 +1,22 @@
+{
+  "$schema": "../schemas/character.schema.json",
+  "id": "gym-friend",
+  "name": "Cal",
+  "sprite": {
+    "asset": "placeholder",
+    "path": "",
+    "shirtColor": "#22c55e",
+    "faceColor": "#fde68a"
+  },
+  "portrait": {
+    "asset": "generated",
+    "path": "",
+    "backgroundColor": "#1f2937",
+    "shirtColor": "#22c55e",
+    "faceColor": "#fde68a",
+    "hairColor": "#111827"
+  },
+  "movementSpeed": 46,
+  "dialogueColor": "#fecaca",
+  "emotes": {}
+}
