@@ -319,19 +319,19 @@ function createReviewHtml(packName) {
   <main><div id="grid" class="grid"></div></main>
   <script>
     fetch('manifest.json')
-      .then((response) => response.json())
-      .then((manifest) => {
-        const grid = document.getElementById('grid');
-        grid.innerHTML = manifest.objects.map((item) => `
-          <article class="card">
-            <div class="preview"><img src="${'${item.filename}'}" alt="${'${item.filename}'}"></div>
-            <div class="name">${'${item.filename}'}</div>
-            <div class="meta">${'${item.width}'} x ${'${item.height}'} px</div>
-          </article>
-        `).join('');
+      .then(function(response) { return response.json(); })
+      .then(function(manifest) {
+        var grid = document.getElementById('grid');
+        grid.innerHTML = manifest.objects.map(function(item) {
+          return '<article class="card">'
+            + '<div class="preview"><img src="' + item.filename + '" alt="' + item.filename + '"></div>'
+            + '<div class="name">' + item.filename + '</div>'
+            + '<div class="meta">' + item.width + ' x ' + item.height + ' px</div>'
+            + '</article>';
+        }).join('');
       })
-      .catch((error) => {
-        document.getElementById('grid').textContent = `Unable to load manifest.json: ${'${error.message}'}`;
+      .catch(function(error) {
+        document.getElementById('grid').textContent = 'Unable to load manifest.json: ' + error.message;
       });
   </script>
 </body>
