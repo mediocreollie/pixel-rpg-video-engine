@@ -6,6 +6,9 @@
   "musicPath": "",
   "ambiencePath": "",
   "useTilemap": false,
+  "cameraZoom": 1.85,
+  "playerScale": 0.95,
+  "propScaleMultiplier": 0.92,
   "tilemap": {
     "mapPath": "/maps/pub_mvp.json",
     "tilesetPath": "/assets/tilesets/pub_mvp_tileset.png",
