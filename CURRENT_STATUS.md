@@ -21,6 +21,8 @@
 - `public/locations/pub.json` now sets `useTilemap: false`, so generated pub rendering is the active default.
 - Pub tilemap rendering remains in code as future opt-in support and only runs when a location explicitly sets `useTilemap: true`.
 - Pub visual direction remains asset-led, but the current PNG is treated as a reference/asset sheet rather than a grid tileset.
+- The pub now preloads and places a first pass of promoted named object-atlas PNGs from `public/assets/props/pub/`.
+- Missing named pub PNGs fall back to generated shape props instead of crashing the scene.
 - The camera remains player-follow only and is constrained to the active map bounds.
 - `Escape` returns from gameplay to the scene selector.
 - `R` restarts the current gameplay scene while gameplay is active.
@@ -79,6 +81,22 @@ What changed:
 Visual effect:
 
 The pub is stable again and no longer displays random sliced fragments from `pub_mvp_tileset.png`. The tileset path remains documented for future work, but the current PNG is treated as a visual benchmark/reference sheet rather than a render-ready 16x16 tileset.
+
+## Pub Object Asset Pass
+
+The Pub Friend interior now uses promoted production PNGs from the object-atlas workflow while staying on the generated map renderer.
+
+What changed:
+
+- Added a pub-only preload list for the first named production assets in `public/assets/props/pub/`.
+- Added safe optional image prop placement in `WorldScene`.
+- Updated `public/locations/pub.json` to place named PNG props for wall depth, floor dressing, bar pieces, tables, stools, shelves, barrels, fireplace, signage, lamps, plants, windows, rugs, and the door.
+- Kept generated shape fallbacks on the same prop entries so missing PNGs do not crash the pub scene.
+- Kept `useTilemap: false`; the broken mixed-size tileset slicing path is still not active.
+
+Visual effect:
+
+The pub should now read less like rectangle placeholders and more like a DS-era RPG interior built from reusable object sprites, while preserving the Pub Friend flow, dialogue, player movement, camera follow, and punchline reveal.
 
 ## Pub Tilemap Debug Pass
 
@@ -163,15 +181,16 @@ GitHub Actions validation/build has been added separately through `.github/workf
 22. Walk into the highlighted pub door.
 23. Confirm the pub interior loads.
 24. Confirm the pub uses the generated renderer by default and shows no random sliced tile fragments.
-25. Confirm the beer punchline is visually obvious.
-26. Confirm no missing `townCenter` spawn warning appears in the pub.
-27. Press `Escape` and confirm the scene selector returns.
-28. Start Pub Friend again and confirm the scene still loads.
-29. Start Pub Friend, press `R`, and confirm the scene restarts.
-30. Press `H` and confirm the recording overlay hides/shows.
-31. Press `?` and confirm the controls screen opens.
-32. Toggle 9:16 canvas mode and repeat the key checks for readability.
+25. Confirm the pub displays named production PNG props when those files are available.
+26. Confirm the beer punchline is visually obvious.
+27. Confirm no missing `townCenter` spawn warning appears in the pub.
+28. Press `Escape` and confirm the scene selector returns.
+29. Start Pub Friend again and confirm the scene still loads.
+30. Start Pub Friend, press `R`, and confirm the scene restarts.
+31. Press `H` and confirm the recording overlay hides/shows.
+32. Press `?` and confirm the controls screen opens.
+33. Toggle 9:16 canvas mode and repeat the key checks for readability.
 
 ## Next Recommended Task
 
-Run the Pub Friend browser test to confirm the generated pub is stable again, then prepare either a proper 16x16 grid tileset or an object-atlas placement workflow before re-enabling tilemap rendering.
+Run the Pub Friend browser test to confirm the generated pub is stable with the new object-atlas props, then tune object scale and placement based on a real screenshot before adding more assets.
