@@ -16,6 +16,9 @@
 - The pub door exit points to the `pub` location.
 - Entering the pub switches to `public/locations/pub.json`.
 - The pub interior has placeholder bar, table, beer, shelf, stool, wall sign, light, and crate-like prop dressing for the punchline.
+- The pub scene now has a first tileset workflow through `public/maps/pub_mvp.json` and `public/assets/tilesets/pub_mvp_tileset.png`.
+- Generated pub rendering is now fallback only when the tilemap or tileset cannot be loaded.
+- Pub visual direction is now asset-led rather than rectangle-led.
 - The camera remains player-follow only and is constrained to the active map bounds.
 - `Escape` returns from gameplay to the scene selector.
 - `R` restarts the current gameplay scene while gameplay is active.
@@ -57,6 +60,22 @@ What changed:
 Visual effect:
 
 The pub interior should now feel busier, warmer, and more lived in while still using placeholder-friendly JSON props. The scene is closer to the art direction because the environment carries more of the pub identity before dialogue explains it.
+
+## Pub Tileset Workflow Pass
+
+The Pub Friend interior now opts into a simple tilemap-compatible asset workflow.
+
+What changed:
+
+- Added `TILED_WORKFLOW.md` to document the asset-led scene workflow.
+- Added `public/maps/pub_mvp.json` as the first pub test map.
+- Pointed `public/locations/pub.json` at `public/maps/pub_mvp.json` and `public/assets/tilesets/pub_mvp_tileset.png`.
+- Updated `WorldScene` so locations with a tilemap and tileset render from tile frames instead of generated rectangle props.
+- Kept the existing generated pub map and props as fallback if the map or tileset is missing.
+
+Visual effect:
+
+The pub is now set up to move toward small generated or handmade tilesets. The target direction is asset-led interior composition, with generated rectangles preserved only as a resilience path while the tileset workflow settles.
 
 ## Untested Due To Sandbox Command Issue
 
@@ -102,16 +121,15 @@ GitHub Actions validation/build has been added separately through `.github/workf
 22. Walk into the highlighted pub door.
 23. Confirm the pub interior loads.
 24. Confirm the beer punchline is visually obvious.
-25. Confirm the pub now has visible shelves, stools, wall accents, bar details, and crate-like clutter.
-26. Press `Escape` and confirm the scene selector returns.
-27. Start Pub Friend again and confirm the scene still loads.
-28. Start Pub Friend, press `R`, and confirm the scene restarts.
-29. Press `H` and confirm the recording overlay hides/shows.
-30. Press `?` and confirm the controls screen opens.
-31. Toggle 9:16 canvas mode and repeat the key checks for readability.
+25. Confirm the pub uses the tileset map when `public/assets/tilesets/pub_mvp_tileset.png` is available.
+26. Confirm the generated pub fallback still loads if the tilemap or tileset is missing.
+27. Press `Escape` and confirm the scene selector returns.
+28. Start Pub Friend again and confirm the scene still loads.
+29. Start Pub Friend, press `R`, and confirm the scene restarts.
+30. Press `H` and confirm the recording overlay hides/shows.
+31. Press `?` and confirm the controls screen opens.
+32. Toggle 9:16 canvas mode and repeat the key checks for readability.
 
 ## Next Recommended Task
 
-Run the manual checklist above, then fix only issues found in the Pub Friend loop before expanding beach or gym content.
-
-The next visual pass should be `Pub Punchline Composition Pass` from `NEXT_VISUAL_PASS.md`.
+Make sure `public/assets/tilesets/pub_mvp_tileset.png` is present in the GitHub repository, then run CI and manually check the Pub Friend pub interior before expanding beach or gym content.
