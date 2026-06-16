@@ -15,11 +15,12 @@
 - Jack's scripted path leads along the road toward the pub door.
 - The pub door exit points to the `pub` location.
 - Entering the pub switches to `public/locations/pub.json`.
-- The pub interior has placeholder bar, table, beer, shelf, stool, wall sign, light, and crate-like prop dressing for the punchline.
-- The pub scene now has a first tileset workflow through `public/maps/pub_mvp.json` and `public/assets/tilesets/pub_mvp_tileset.png`.
+- The pub interior currently uses the stable generated pub renderer.
+- The pub scene has a first future tileset workflow through `public/maps/pub_mvp.json` and `public/assets/tilesets/pub_mvp_tileset.png`.
 - The pub MVP tileset asset is present in the GitHub repository at `public/assets/tilesets/pub_mvp_tileset.png`.
-- Generated pub rendering is now fallback only when the tilemap or tileset cannot be loaded.
-- Pub visual direction is now asset-led rather than rectangle-led.
+- `public/locations/pub.json` now sets `useTilemap: false`, so generated pub rendering is the active default.
+- Pub tilemap rendering remains in code as future opt-in support and only runs when a location explicitly sets `useTilemap: true`.
+- Pub visual direction remains asset-led, but the current PNG is treated as a reference/asset sheet rather than a grid tileset.
 - The camera remains player-follow only and is constrained to the active map bounds.
 - `Escape` returns from gameplay to the scene selector.
 - `R` restarts the current gameplay scene while gameplay is active.
@@ -64,25 +65,26 @@ The pub interior should now feel busier, warmer, and more lived in while still u
 
 ## Pub Tileset Workflow Pass
 
-The Pub Friend interior now opts into a simple tilemap-compatible asset workflow.
+The Pub Friend interior has a simple tilemap-compatible workflow prepared, but tilemap rendering is disabled by default.
 
 What changed:
 
 - Added `TILED_WORKFLOW.md` to document the asset-led scene workflow.
 - Added `public/maps/pub_mvp.json` as the first pub test map.
 - Pointed `public/locations/pub.json` at `public/maps/pub_mvp.json` and `public/assets/tilesets/pub_mvp_tileset.png`.
-- Updated `WorldScene` so locations with a tilemap and tileset render from tile frames instead of generated rectangle props.
-- Kept the existing generated pub map and props as fallback if the map or tileset is missing.
+- Added `useTilemap: false` to `public/locations/pub.json` so the generated pub renderer stays active.
+- Updated `WorldScene` so locations with `useTilemap: true`, a tilemap, and a tileset can render from tile frames.
+- Kept the existing generated pub map and props as the stable default and fallback.
 
 Visual effect:
 
-The pub is now set up to move toward small generated or handmade tilesets. The target direction is asset-led interior composition, with generated rectangles preserved only as a resilience path while the tileset workflow settles.
+The pub is stable again and no longer displays random sliced fragments from `pub_mvp_tileset.png`. The tileset path remains documented for future work, but the current PNG is treated as a visual benchmark/reference sheet rather than a render-ready 16x16 tileset.
 
 ## Pub Tilemap Debug Pass
 
-A temporary pub-only debugging pass has been added to make the failed tileset render diagnosable in the next browser test.
+A temporary pub-only debugging pass was added to diagnose the failed tileset render.
 
-Runtime console logs now report:
+Runtime console logs can report:
 
 - Pub map path.
 - Pub tileset path.
@@ -96,7 +98,7 @@ Runtime console logs now report:
 - The first 20 tile frame IDs being rendered.
 - Whether the highest frame ID used by the map fits inside the loaded tileset frame count.
 
-A temporary visual overlay now draws tile grid lines, map bounds, player spawn, and door markers when the pub tilemap renderer is active.
+These logs now only matter when `useTilemap: true` is set for a location.
 
 Static map inspection:
 
@@ -107,8 +109,15 @@ Static map inspection:
 Tileset slicing status:
 
 - The GitHub API confirms `public/assets/tilesets/pub_mvp_tileset.png` is a binary PNG file.
-- Static GitHub file reads do not expose the image dimensions in this session.
-- The next browser test should use the `[PubTilemapDebug]` logs to verify whether the PNG is grid-sliceable as 16x16 tiles. If the logged image dimensions are not divisible by 16, or if the logged frame count is less than or equal to the highest frame ID used by the map, the current tileset image is not compatible with the map's 16x16 frame IDs.
+- Browser testing showed the PNG is not a strict 16x16 grid tileset.
+- The PNG is a good art direction reference and asset sheet, but it contains mixed-size furniture/prop art with uneven spacing.
+- Tilemap rendering is disabled until a proper grid tileset or object atlas is prepared.
+
+## Pub Destination NPC Handling
+
+The pub destination does not need Jack to spawn at the town-only `townCenter` point.
+
+`WorldScene` now skips actors without a valid spawn silently when the current location is the scene's destination location. This prevents the missing `townCenter` spawn warning in the pub while keeping normal spawn warnings active for route locations such as town.
 
 ## Untested Due To Sandbox Command Issue
 
@@ -153,9 +162,9 @@ GitHub Actions validation/build has been added separately through `.github/workf
 21. Follow Jack and confirm the player can move freely along the route.
 22. Walk into the highlighted pub door.
 23. Confirm the pub interior loads.
-24. Confirm the beer punchline is visually obvious.
-25. Confirm the pub uses the tileset map when `public/assets/tilesets/pub_mvp_tileset.png` is available.
-26. Confirm the generated pub fallback still loads if the tilemap or tileset is missing.
+24. Confirm the pub uses the generated renderer by default and shows no random sliced tile fragments.
+25. Confirm the beer punchline is visually obvious.
+26. Confirm no missing `townCenter` spawn warning appears in the pub.
 27. Press `Escape` and confirm the scene selector returns.
 28. Start Pub Friend again and confirm the scene still loads.
 29. Start Pub Friend, press `R`, and confirm the scene restarts.
@@ -165,4 +174,4 @@ GitHub Actions validation/build has been added separately through `.github/workf
 
 ## Next Recommended Task
 
-Run the Pub Friend browser test with the console open and inspect the `[PubTilemapDebug]` output before changing renderer logic or artwork.
+Run the Pub Friend browser test to confirm the generated pub is stable again, then prepare either a proper 16x16 grid tileset or an object-atlas placement workflow before re-enabling tilemap rendering.
