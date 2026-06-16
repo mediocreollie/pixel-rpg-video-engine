@@ -5,6 +5,7 @@
   "background": "#451a03",
   "musicPath": "",
   "ambiencePath": "",
+  "useTilemap": false,
   "tilemap": {
     "mapPath": "/maps/pub_mvp.json",
     "tilesetPath": "/assets/tilesets/pub_mvp_tileset.png",
