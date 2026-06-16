@@ -1,9 +1,18 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-const PROP_DIR = path.normalize('public/assets/props/pub');
-const MAPPING_PATH = path.join(PROP_DIR, 'selected-props.json');
-const overwrite = process.argv.includes('--overwrite');
+const SCENE_PACKS = {
+  pub: { propDir: 'public/assets/props/pub' },
+  'outside-route': { propDir: 'public/assets/props/outside-route' },
+  beach: { propDir: 'public/assets/props/beach' },
+  park: { propDir: 'public/assets/props/park' },
+  cafe: { propDir: 'public/assets/props/cafe' },
+};
+
+const options = parseArgs(process.argv.slice(2));
+const pack = getScenePack(options.pack);
+const propDir = path.normalize(pack.propDir);
+const mappingPath = path.join(propDir, 'selected-props.json');
 
 try {
   main();
@@ -13,15 +22,15 @@ try {
 }
 
 function main() {
-  if (!fs.existsSync(MAPPING_PATH)) {
-    throw new Error(`mapping file not found: ${MAPPING_PATH}`);
+  if (!fs.existsSync(mappingPath)) {
+    throw new Error(`mapping file not found: ${mappingPath}`);
   }
 
-  const mappings = JSON.parse(fs.readFileSync(MAPPING_PATH, 'utf8'));
+  const mappings = JSON.parse(fs.readFileSync(mappingPath, 'utf8'));
   const entries = Object.entries(mappings);
 
   if (entries.length === 0) {
-    console.log('No selected props to promote. Add mappings to selected-props.json first.');
+    console.log(`No selected props to promote for ${options.pack}. Add mappings to selected-props.json first.`);
     return;
   }
 
@@ -32,7 +41,7 @@ function main() {
   }
 
   const existingTargets = planned.filter((item) => fs.existsSync(item.targetPath));
-  if (existingTargets.length > 0 && !overwrite) {
+  if (existingTargets.length > 0 && !options.overwrite) {
     throw new Error(`refusing to overwrite existing production files:\n${existingTargets.map((item) => item.targetFilename).join('\n')}\nRun with --overwrite to replace them.`);
   }
 
@@ -40,10 +49,42 @@ function main() {
     fs.copyFileSync(item.sourcePath, item.targetPath);
   }
 
-  console.log(`Promoted ${planned.length} pub prop(s):`);
+  console.log(`Promoted ${planned.length} ${options.pack} prop(s):`);
   for (const item of planned) {
     console.log(`- ${item.rawRelativePath} -> ${item.targetFilename}`);
   }
+}
+
+function parseArgs(args) {
+  const positional = [];
+  const parsed = {
+    pack: 'pub',
+    overwrite: false,
+  };
+
+  for (const arg of args) {
+    if (arg === '--overwrite') {
+      parsed.overwrite = true;
+    } else if (arg.startsWith('--pack=')) {
+      parsed.pack = arg.slice('--pack='.length);
+    } else {
+      positional.push(arg);
+    }
+  }
+
+  if (positional[0]) {
+    parsed.pack = positional[0];
+  }
+
+  return parsed;
+}
+
+function getScenePack(packName) {
+  const pack = SCENE_PACKS[packName];
+  if (!pack) {
+    throw new Error(`unknown scene pack: ${packName}. Expected one of: ${Object.keys(SCENE_PACKS).join(', ')}`);
+  }
+  return pack;
 }
 
 function createPromotionPlan(name, rawRelativePath) {
@@ -63,9 +104,9 @@ function createPromotionPlan(name, rawRelativePath) {
     throw new Error(`raw file path for ${name} must look like raw/object_###.png`);
   }
 
-  const sourcePath = path.join(PROP_DIR, rawRelativePath);
+  const sourcePath = path.join(propDir, rawRelativePath);
   const targetFilename = `${name}.png`;
-  const targetPath = path.join(PROP_DIR, targetFilename);
+  const targetPath = path.join(propDir, targetFilename);
 
   return {
     name,
