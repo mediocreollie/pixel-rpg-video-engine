@@ -8,6 +8,7 @@
     "build": "vite build",
     "validate-content": "node scripts/validate-content.js",
     "extract-objects": "node scripts/extract-objects.js",
+    "promote-props": "node scripts/promote-props.js",
     "preview": "vite preview"
   },
   "dependencies": {
