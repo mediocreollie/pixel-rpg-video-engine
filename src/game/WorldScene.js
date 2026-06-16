@@ -5,6 +5,7 @@ const TILE_SIZE = 16;
 const FALLBACK_COLOR = '#111827';
 const CAMERA_ZOOM = 2.35;
 const CAMERA_LERP = 0.12;
+const PUB_TILEMAP_DEBUG = true;
 const FALLBACK_LOCATION = {
   id: 'fallback',
   mapName: 'Missing Location',
@@ -79,10 +80,48 @@ export class WorldScene extends Phaser.Scene {
       return;
     }
 
-    this.load.json(this.getTilemapCacheKey(locationId), tilemap.mapPath);
-    this.load.spritesheet(this.getTilesetCacheKey(locationId), tilemap.tilesetPath, {
-      frameWidth: tilemap.tileWidth || TILE_SIZE,
-      frameHeight: tilemap.tileHeight || TILE_SIZE,
+    const mapKey = this.getTilemapCacheKey(locationId);
+    const tilesetKey = this.getTilesetCacheKey(locationId);
+    const tileWidth = tilemap.tileWidth || TILE_SIZE;
+    const tileHeight = tilemap.tileHeight || TILE_SIZE;
+
+    this.logPubTilemapDebug('preload:queue', {
+      locationId,
+      mapPath: tilemap.mapPath,
+      tilesetPath: tilemap.tilesetPath,
+      tileWidth,
+      tileHeight
+    });
+
+    this.load.on('filecomplete', (key, type) => {
+      if (key === mapKey || key === tilesetKey) {
+        this.logPubTilemapDebug('preload:filecomplete', { key, type });
+      }
+    });
+
+    this.load.on('loaderror', (file) => {
+      if (file?.key === mapKey || file?.key === tilesetKey) {
+        this.logPubTilemapDebug('preload:loaderror', {
+          key: file.key,
+          type: file.type,
+          url: file.url,
+          src: file.src
+        });
+      }
+    });
+
+    this.load.once('complete', () => {
+      this.logPubTilemapDebug('preload:complete', {
+        mapJsonLoaded: Boolean(this.cache.json.get(mapKey)),
+        tilesetImageLoaded: this.textures.exists(tilesetKey),
+        tileset: this.getTilesetDebugInfo(tilesetKey)
+      });
+    });
+
+    this.load.json(mapKey, tilemap.mapPath);
+    this.load.spritesheet(tilesetKey, tilemap.tilesetPath, {
+      frameWidth: tileWidth,
+      frameHeight: tileHeight,
       margin: tilemap.margin || 0,
       spacing: tilemap.spacing || 0
     });
@@ -177,6 +216,12 @@ export class WorldScene extends Phaser.Scene {
     this.mapPixelWidth = width;
     this.mapPixelHeight = height;
     this.physics.world.setBounds(0, 0, width, height);
+
+    this.logPubTilemapDebug('fallback:generated-renderer-used', {
+      reason: 'Tilemap JSON or tileset texture was unavailable at render time.',
+      mapPath: this.locationData.tilemap?.mapPath,
+      tilesetPath: this.locationData.tilemap?.tilesetPath
+    });
   }
 
   buildTilemapLocation(tilemap) {
@@ -187,6 +232,27 @@ export class WorldScene extends Phaser.Scene {
     const height = tilemap.height || firstLayer?.rows?.length || this.locationData.map.tiles.length;
     const textureKey = this.getTilesetCacheKey(this.currentLocationId);
     const collisionTiles = new Set(asArray(tilemap.collisionLegend));
+    const tileDebug = this.collectTileDebugStats(tilemap);
+    const tilesetDebug = this.getTilesetDebugInfo(textureKey);
+    let renderedTiles = 0;
+
+    this.logPubTilemapDebug('render:start', {
+      mapPath: this.locationData.tilemap?.mapPath,
+      tilesetPath: this.locationData.tilemap?.tilesetPath,
+      mapJsonLoaded: true,
+      tilesetImageLoaded: this.textures.exists(textureKey),
+      tileWidth: this.locationData.tilemap?.tileWidth || tileSize,
+      tileHeight: this.locationData.tilemap?.tileHeight || tileSize,
+      tileset: tilesetDebug,
+      mapWidthTiles: width,
+      mapHeightTiles: height,
+      layerCount: layers.length,
+      objectCount: asArray(tilemap.objects).length,
+      uniqueTileSymbols: tileDebug.uniqueTileSymbols,
+      uniqueFrameIds: tileDebug.uniqueFrameIds,
+      maxFrameIdUsed: tileDebug.maxFrameIdUsed,
+      first20TileIds: tileDebug.first20TileIds
+    });
 
     layers.forEach((layer, layerIndex) => {
       asArray(layer.rows).forEach((row, y) => {
@@ -196,6 +262,7 @@ export class WorldScene extends Phaser.Scene {
           const worldY = y * tileSize;
 
           if (frame >= 0) {
+            renderedTiles += 1;
             this.add.image(worldX + tileSize / 2, worldY + tileSize / 2, textureKey, frame)
               .setOrigin(0.5)
               .setDepth(layer.depth ?? layerIndex);
@@ -211,6 +278,19 @@ export class WorldScene extends Phaser.Scene {
     this.mapPixelWidth = width * tileSize;
     this.mapPixelHeight = height * tileSize;
     this.physics.world.setBounds(0, 0, this.mapPixelWidth, this.mapPixelHeight);
+
+    this.logPubTilemapDebug('render:complete', {
+      renderedTiles,
+      layerCount: layers.length,
+      mapBoundsPixels: {
+        width: this.mapPixelWidth,
+        height: this.mapPixelHeight
+      },
+      tilesetFrameTotal: tilesetDebug.frameTotal,
+      frameRangeLooksValid: tilesetDebug.frameTotal === null || tileDebug.maxFrameIdUsed < tilesetDebug.frameTotal
+    });
+
+    this.drawPubTilemapDebugOverlay(tilemap, { width, height, tileSize });
   }
 
   getLoadedTilemap() {
@@ -218,8 +298,20 @@ export class WorldScene extends Phaser.Scene {
     const mapKey = this.getTilemapCacheKey(this.currentLocationId);
     const tilesetKey = this.getTilesetCacheKey(this.currentLocationId);
     const tilemap = this.cache.json.get(mapKey);
+    const mapJsonLoaded = Boolean(tilemap);
+    const tilesetImageLoaded = this.textures.exists(tilesetKey);
 
-    if (!config?.mapPath || !config?.tilesetPath || !tilemap || !this.textures.exists(tilesetKey)) {
+    this.logPubTilemapDebug('render:availability', {
+      mapPath: config?.mapPath,
+      tilesetPath: config?.tilesetPath,
+      mapJsonLoaded,
+      tilesetImageLoaded,
+      tileWidth: config?.tileWidth || TILE_SIZE,
+      tileHeight: config?.tileHeight || TILE_SIZE,
+      tileset: tilesetImageLoaded ? this.getTilesetDebugInfo(tilesetKey) : null
+    });
+
+    if (!config?.mapPath || !config?.tilesetPath || !tilemap || !tilesetImageLoaded) {
       return null;
     }
 
@@ -232,6 +324,109 @@ export class WorldScene extends Phaser.Scene {
 
   getTilesetCacheKey(locationId) {
     return `tileset:${locationId}`;
+  }
+
+  getTilesetDebugInfo(textureKey) {
+    if (!this.textures.exists(textureKey)) {
+      return null;
+    }
+
+    const texture = this.textures.get(textureKey);
+    const source = texture.getSourceImage();
+    const frameNames = texture.getFrameNames().filter((frameName) => frameName !== '__BASE');
+
+    return {
+      textureKey,
+      imageWidth: source?.width ?? null,
+      imageHeight: source?.height ?? null,
+      frameTotal: frameNames.length,
+      firstFrameNames: frameNames.slice(0, 12)
+    };
+  }
+
+  collectTileDebugStats(tilemap) {
+    const symbols = [];
+    const frameIds = [];
+
+    asArray(tilemap.layers).forEach((layer) => {
+      asArray(layer.rows).forEach((row) => {
+        [...row].forEach((symbol) => {
+          const frame = tilemap.legend?.[symbol] ?? -1;
+          symbols.push(symbol);
+          if (frame >= 0) {
+            frameIds.push(frame);
+          }
+        });
+      });
+    });
+
+    return {
+      uniqueTileSymbols: [...new Set(symbols)],
+      uniqueFrameIds: [...new Set(frameIds)],
+      maxFrameIdUsed: frameIds.length > 0 ? Math.max(...frameIds) : -1,
+      first20TileIds: frameIds.slice(0, 20)
+    };
+  }
+
+  drawPubTilemapDebugOverlay(tilemap, { width, height, tileSize }) {
+    if (!PUB_TILEMAP_DEBUG || this.currentLocationId !== 'pub') {
+      return;
+    }
+
+    const debug = this.add.graphics().setDepth(700);
+    const pixelWidth = width * tileSize;
+    const pixelHeight = height * tileSize;
+
+    debug.lineStyle(1, 0xffffff, 0.18);
+    for (let x = 0; x <= pixelWidth; x += tileSize) {
+      debug.lineBetween(x, 0, x, pixelHeight);
+    }
+    for (let y = 0; y <= pixelHeight; y += tileSize) {
+      debug.lineBetween(0, y, pixelWidth, y);
+    }
+
+    debug.lineStyle(2, 0x38bdf8, 0.95);
+    debug.strokeRect(0, 0, pixelWidth, pixelHeight);
+
+    const spawn = this.getSpawnPoint(this.spawnPoint || this.locationData.playerSpawnPoint || 'default');
+    debug.lineStyle(2, 0x22c55e, 1);
+    debug.strokeRect(spawn.x * tileSize + 1, spawn.y * tileSize + 1, tileSize - 2, tileSize - 2);
+    this.add.text(spawn.x * tileSize + tileSize / 2, spawn.y * tileSize - 2, 'SPAWN', {
+      fontFamily: 'monospace',
+      fontSize: '5px',
+      color: '#bbf7d0',
+      backgroundColor: '#14532d'
+    }).setOrigin(0.5, 1).setDepth(701);
+
+    const doorTiles = [];
+    asArray(tilemap.layers).forEach((layer) => {
+      asArray(layer.rows).forEach((row, y) => {
+        [...row].forEach((tile, x) => {
+          if (tile === 'D') {
+            doorTiles.push({ x, y });
+          }
+        });
+      });
+    });
+
+    doorTiles.forEach((door) => {
+      debug.lineStyle(2, 0xfacc15, 1);
+      debug.strokeRect(door.x * tileSize + 2, door.y * tileSize + 2, tileSize - 4, tileSize - 4);
+      this.add.text(door.x * tileSize + tileSize / 2, door.y * tileSize + tileSize + 2, 'DOOR', {
+        fontFamily: 'monospace',
+        fontSize: '5px',
+        color: '#fef3c7',
+        backgroundColor: '#713f12'
+      }).setOrigin(0.5, 0).setDepth(701);
+    });
+  }
+
+  logPubTilemapDebug(label, payload) {
+    if (!PUB_TILEMAP_DEBUG || this.currentLocationId !== 'pub') {
+      return;
+    }
+
+    console.info(`[PubTilemapDebug] ${label}`, payload);
   }
 
   createMapBlocker(worldX, worldY, width, height) {
