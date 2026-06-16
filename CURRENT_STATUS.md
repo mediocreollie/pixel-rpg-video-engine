@@ -4,6 +4,7 @@
 
 - The app boots through `BootScene`, loads `public/scenes/manifest.json`, then opens the DS-era `MenuScene`.
 - `Pub Friend` is listed in the manifest and is the current priority MVP test scene.
+- `Beach Day` is listed in the manifest and uses `public/scenes/beach.json` with `public/locations/beach.json` as its destination.
 - The menu can display scene title, description, starting location, and placeholder/custom asset status.
 - Selecting `Pub Friend` starts `WorldScene` with the pub scene ID.
 - The title card is loaded from `public/scenes/pub.json` and appears at the start of the town scene.
@@ -30,7 +31,9 @@
 - The latest composition pass strengthens route logic: the spawn, Jack path, pub direction cue, and pub doorway now sit on one readable route spine.
 - The latest pub composition pass groups props into believable zones: wall/bar service area, seating clusters, entrance lane, wall fixtures, and anchored rug area.
 - `WorldScene` now supports location-level prop asset packs through `propAssetPack`, so future connector locations can use named production assets without borrowing pub texture keys.
+- `WorldScene` now preloads the first beach production prop pack for `public/assets/props/beach/`.
 - `WorldScene` now supports clamped location-level camera and display settings through `cameraZoom`, `playerScale`, and `propScaleMultiplier`.
+- The beach destination now uses promoted named PNG props for sand, shoreline, water, hut/signage, boardwalk/entry details, and beach-day clusters.
 - The camera remains player-follow only and is constrained to the active map bounds.
 - `Escape` returns from gameplay to the scene selector.
 - `R` restarts the current gameplay scene while gameplay is active.
@@ -121,6 +124,25 @@ What changed:
 Visual effect:
 
 The starting area should now feel more like a small Pokemon / DS-era town edge route leading to destination scenes, while still preserving the original Pub Friend scene structure.
+
+## Beach Destination Pass
+
+The first beach destination scene now uses the promoted beach object-atlas assets.
+
+What changed:
+
+- Added the first beach production prop list to `WorldScene` so `propAssetPack: "beach"` can preload named PNGs from `public/assets/props/beach/`.
+- Updated `public/locations/beach.json` to use `propAssetPack: "beach"`.
+- Rebuilt the beach destination map so walkable sand fills the arrival/play area and blocked water sits along the top and right edge.
+- Added a readable shoreline using water, wave, and rock-shore assets.
+- Added arrival/edge pieces near the lower-left entry: boardwalk stairs, fencing, and a beach sign.
+- Added a small hut landmark with blue roof and lifebuoy wall detail near the edge.
+- Added a beach-day cluster with umbrella, towel, deck chair, cooler, bucket, surfboard, and flag.
+- Added light environmental details such as grass, dune grass, driftwood, sandcastle, and a seagull.
+
+Visual effect:
+
+The Beach Day destination should now read as a spacious beach scene rather than a labelled placeholder. The ocean is the destination feature, the sand remains walkable, and props are grouped around believable arrival, hut, shoreline, and relaxation zones.
 
 ## Scene Composition Logic Pass
 
@@ -258,39 +280,45 @@ GitHub Actions validation/build has been added separately through `.github/workf
 5. Open the local Vite URL.
 6. Confirm the scene selector appears before gameplay.
 7. Confirm `Pub Friend` is selectable.
-8. Confirm the menu shows the Pub Friend title, description, starting location, and asset status.
-9. Press `Space` or `Enter` to start Pub Friend.
-10. Confirm the title card appears.
-11. Press `Space` or wait for the title card duration.
-12. Confirm town loads as the outside-route / town-edge connector area.
-13. Confirm the player appears.
-14. Confirm Jack appears near the player.
-15. Confirm the path visually leads from the spawn/Jack area toward the pub entrance.
-16. Confirm the wider town camera shows more of the route, edge props, and pub direction context without leaving the map bounds.
-17. Walk around town and confirm the camera follows the player without showing outside the map.
-18. Stand near Jack and press `Space` or `Enter`.
-19. Confirm the DS-era dialogue box opens.
-20. Confirm the typewriter effect runs.
-21. Press `Space` mid-line and confirm the line completes instantly.
-22. Press `Space` again and confirm dialogue closes.
-23. Confirm Jack starts walking toward the pub door through the connector route.
-24. Follow Jack and confirm the player can move freely along the route.
-25. Walk into the highlighted pub door.
-26. Confirm the pub interior loads.
-27. Confirm the pub entrance area is readable and not blocked by furniture.
-28. Confirm the wider pub camera shows the bar, seating, entrance lane, and rug area together.
-29. Confirm the bar, shelves, taps, tables, stools, wall fixtures, and rug feel like organised zones.
-30. Confirm the pub uses the generated renderer by default and shows no random sliced tile fragments.
-31. Confirm the pub displays named production PNG props when those files are available.
-32. Confirm the beer punchline is visually obvious.
-33. Confirm no missing `townCenter` spawn warning appears in the pub.
-34. Press `Escape` and confirm the scene selector returns.
-35. Start Pub Friend again and confirm the scene still loads.
-36. Start Pub Friend, press `R`, and confirm the scene restarts.
-37. Press `H` and confirm the recording overlay hides/shows.
-38. Press `?` and confirm the controls screen opens.
-39. Toggle 9:16 canvas mode and repeat the key checks for readability.
+8. Confirm `Beach Day` is selectable.
+9. Confirm the menu shows scene title, description, starting location, and asset status.
+10. Press `Space` or `Enter` to start Pub Friend.
+11. Confirm the title card appears.
+12. Press `Space` or wait for the title card duration.
+13. Confirm town loads as the outside-route / town-edge connector area.
+14. Confirm the player appears.
+15. Confirm Jack appears near the player.
+16. Confirm the path visually leads from the spawn/Jack area toward the pub entrance.
+17. Confirm the wider town camera shows more of the route, edge props, and pub direction context without leaving the map bounds.
+18. Walk around town and confirm the camera follows the player without showing outside the map.
+19. Stand near Jack and press `Space` or `Enter`.
+20. Confirm the DS-era dialogue box opens.
+21. Confirm the typewriter effect runs.
+22. Press `Space` mid-line and confirm the line completes instantly.
+23. Press `Space` again and confirm dialogue closes.
+24. Confirm Jack starts walking toward the pub door through the connector route.
+25. Follow Jack and confirm the player can move freely along the route.
+26. Walk into the highlighted pub door.
+27. Confirm the pub interior loads.
+28. Confirm the pub entrance area is readable and not blocked by furniture.
+29. Confirm the wider pub camera shows the bar, seating, entrance lane, and rug area together.
+30. Confirm the bar, shelves, taps, tables, stools, wall fixtures, and rug feel like organised zones.
+31. Confirm the pub uses the generated renderer by default and shows no random sliced tile fragments.
+32. Confirm the pub displays named production PNG props when those files are available.
+33. Confirm the beer punchline is visually obvious.
+34. Confirm no missing `townCenter` spawn warning appears in the pub.
+35. Press `Escape` and confirm the scene selector returns.
+36. Start Beach Day and confirm Beth appears in town.
+37. Confirm Beach Day dialogue and Beth's route toward the beach path still work.
+38. Enter the beach path and confirm the beach destination loads.
+39. Confirm the beach uses named production PNG props for shoreline, water, hut, sign, boardwalk, and beach clusters.
+40. Confirm water stays on the edge of the playable space and the sand area remains walkable.
+41. Start Pub Friend again and confirm the scene still loads.
+42. Start Pub Friend, press `R`, and confirm the scene restarts.
+43. Press `H` and confirm the recording overlay hides/shows.
+44. Press `?` and confirm the controls screen opens.
+45. Toggle 9:16 canvas mode and repeat the key checks for readability.
 
 ## Next Recommended Task
 
-Run the Pub Friend browser test to confirm the composition and camera pass read well in motion, then tune route prop scale and pub furniture spacing from a real screenshot before wiring other destination scenes.
+Run browser tests for Pub Friend and Beach Day to confirm the asset-led layouts read well in motion, then tune beach scale/camera from screenshots before building the next destination scene.
