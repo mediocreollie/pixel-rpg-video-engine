@@ -23,6 +23,8 @@
 - Pub visual direction remains asset-led, but the current PNG is treated as a reference/asset sheet rather than a grid tileset.
 - The pub now preloads and places a first pass of promoted named object-atlas PNGs from `public/assets/props/pub/`.
 - Missing named pub PNGs fall back to generated shape props instead of crashing the scene.
+- The object extraction and promotion scripts now support separate scene packs for `pub`, `outside-route`, `beach`, `park`, and `cafe`.
+- Each supported scene pack has an independent `public/assets/props/<pack>/selected-props.json` promotion map.
 - The camera remains player-follow only and is constrained to the active map bounds.
 - `Escape` returns from gameplay to the scene selector.
 - `R` restarts the current gameplay scene while gameplay is active.
@@ -97,6 +99,23 @@ What changed:
 Visual effect:
 
 The pub should now read less like rectangle placeholders and more like a DS-era RPG interior built from reusable object sprites, while preserving the Pub Friend flow, dialogue, player movement, camera follow, and punchline reveal.
+
+## Multi-Scene Object Workflow
+
+The object atlas tooling now works across multiple scene packs instead of only the pub.
+
+What changed:
+
+- `npm run extract-objects` still defaults to pub.
+- `npm run extract-objects -- <pack>` can extract `pub`, `outside-route`, `beach`, `park`, or `cafe` source sheets into separate raw folders.
+- Extraction writes `object_###.png`, `contact_sheet.png`, `manifest.json`, and `review.html` for each pack.
+- `npm run promote-props` still defaults to pub.
+- `npm run promote-props -- <pack>` promotes selected raw assets for the chosen pack only.
+- New empty selection maps were added for `outside-route`, `beach`, `park`, and `cafe`.
+
+Boundary:
+
+This is a workflow/tooling change only. No game rendering was added for the new packs, and existing pub assets were not deleted.
 
 ## Pub Tilemap Debug Pass
 
