@@ -27,6 +27,8 @@
 - Each supported scene pack has an independent `public/assets/props/<pack>/selected-props.json` promotion map.
 - The town starting area now acts as a first outside-route / town-edge connector scene using promoted named PNGs from `public/assets/props/outside-route/`.
 - The outside-route connector keeps the Pub Friend pub-door coordinates and Jack path intact while replacing obvious route placeholders with asset-led foliage, paths, signs, bench, mailbox, fence, and building edge pieces.
+- The latest composition pass strengthens route logic: the spawn, Jack path, pub direction cue, and pub doorway now sit on one readable route spine.
+- The latest pub composition pass groups props into believable zones: wall/bar service area, seating clusters, entrance lane, wall fixtures, and anchored rug area.
 - `WorldScene` now supports location-level prop asset packs through `propAssetPack`, so future connector locations can use named production assets without borrowing pub texture keys.
 - The camera remains player-follow only and is constrained to the active map bounds.
 - `Escape` returns from gameplay to the scene selector.
@@ -117,7 +119,37 @@ What changed:
 
 Visual effect:
 
-The starting area should now feel more like a small Pokémon / DS-era town edge route leading to destination scenes, while still preserving the original Pub Friend scene structure.
+The starting area should now feel more like a small Pokemon / DS-era town edge route leading to destination scenes, while still preserving the original Pub Friend scene structure.
+
+## Scene Composition Logic Pass
+
+The Pub Friend flow now has a first environment-logic pass for both the town connector and pub interior.
+
+Composition rules applied:
+
+- Every prop should support route logic, visual logic, or story logic.
+- Paths should lead to destination doors, not merely decorate the floor.
+- Signs belong near route decisions, entrances, and destination cues.
+- Lamps frame important path bends, entrances, and service areas.
+- Benches belong beside quieter path edges rather than in the walking lane.
+- Fences define boundaries and imply land or scenery behind them.
+- Bushes, flowers, rocks, and trees support edges, corners, and clusters.
+- Building pieces should read as part of a structure around a real entrance.
+- Pub furniture should form zones: bar service, seating groups, wall fixtures, entrance space, and punchline props.
+- Rugs should anchor furniture zones without blocking the player's route.
+
+What changed:
+
+- The Town Edge Route now has a clearer route spine from spawn and Jack toward the pub door.
+- Outside-route props were reduced and repositioned so boundaries, foliage, signs, and landmarks explain where the viewer should look.
+- The pub spawn now lines up with the bottom entrance area.
+- The pub bar is concentrated against the back wall with shelves and taps nearby.
+- Tables, stools, and chairs now form smaller seating groups with open walking lanes between them.
+- Fireplace, lamps, sign, window, shelf, plant, and barrel are placed against walls or edges where they make environmental sense.
+
+Visual effect:
+
+The scenes should feel more intentionally built and less like asset samples placed on a map. The player and Jack remain the movement focus, while the environment now guides the journey and supports the pub reveal.
 
 ## Multi-Scene Object Workflow
 
@@ -209,27 +241,30 @@ GitHub Actions validation/build has been added separately through `.github/workf
 12. Confirm town loads as the outside-route / town-edge connector area.
 13. Confirm the player appears.
 14. Confirm Jack appears near the player.
-15. Walk around town and confirm the camera follows the player without showing outside the map.
-16. Stand near Jack and press `Space` or `Enter`.
-17. Confirm the DS-era dialogue box opens.
-18. Confirm the typewriter effect runs.
-19. Press `Space` mid-line and confirm the line completes instantly.
-20. Press `Space` again and confirm dialogue closes.
-21. Confirm Jack starts walking toward the pub door through the connector route.
-22. Follow Jack and confirm the player can move freely along the route.
-23. Walk into the highlighted pub door.
-24. Confirm the pub interior loads.
-25. Confirm the pub uses the generated renderer by default and shows no random sliced tile fragments.
-26. Confirm the pub displays named production PNG props when those files are available.
-27. Confirm the beer punchline is visually obvious.
-28. Confirm no missing `townCenter` spawn warning appears in the pub.
-29. Press `Escape` and confirm the scene selector returns.
-30. Start Pub Friend again and confirm the scene still loads.
-31. Start Pub Friend, press `R`, and confirm the scene restarts.
-32. Press `H` and confirm the recording overlay hides/shows.
-33. Press `?` and confirm the controls screen opens.
-34. Toggle 9:16 canvas mode and repeat the key checks for readability.
+15. Confirm the path visually leads from the spawn/Jack area toward the pub entrance.
+16. Walk around town and confirm the camera follows the player without showing outside the map.
+17. Stand near Jack and press `Space` or `Enter`.
+18. Confirm the DS-era dialogue box opens.
+19. Confirm the typewriter effect runs.
+20. Press `Space` mid-line and confirm the line completes instantly.
+21. Press `Space` again and confirm dialogue closes.
+22. Confirm Jack starts walking toward the pub door through the connector route.
+23. Follow Jack and confirm the player can move freely along the route.
+24. Walk into the highlighted pub door.
+25. Confirm the pub interior loads.
+26. Confirm the pub entrance area is readable and not blocked by furniture.
+27. Confirm the bar, shelves, taps, tables, stools, wall fixtures, and rug feel like organised zones.
+28. Confirm the pub uses the generated renderer by default and shows no random sliced tile fragments.
+29. Confirm the pub displays named production PNG props when those files are available.
+30. Confirm the beer punchline is visually obvious.
+31. Confirm no missing `townCenter` spawn warning appears in the pub.
+32. Press `Escape` and confirm the scene selector returns.
+33. Start Pub Friend again and confirm the scene still loads.
+34. Start Pub Friend, press `R`, and confirm the scene restarts.
+35. Press `H` and confirm the recording overlay hides/shows.
+36. Press `?` and confirm the controls screen opens.
+37. Toggle 9:16 canvas mode and repeat the key checks for readability.
 
 ## Next Recommended Task
 
-Run the Pub Friend browser test to confirm the outside-route connector and generated pub both remain stable, then tune route prop scale and path readability from a real screenshot before wiring other destination scenes.
+Run the Pub Friend browser test to confirm the composition pass reads well in motion, then tune route prop scale and pub furniture spacing from a real screenshot before wiring other destination scenes.
