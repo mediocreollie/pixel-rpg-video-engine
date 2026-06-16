@@ -69,6 +69,25 @@ export class WorldScene extends Phaser.Scene {
     this.scriptedActors = [];
   }
 
+  preload() {
+    const scene = this.cache.json.get(`scene:${this.sceneId}`);
+    const locationId = this.currentLocationId || scene?.startingLocation;
+    const location = this.cache.json.get(`location:${locationId}`);
+    const tilemap = location?.tilemap;
+
+    if (!tilemap?.mapPath || !tilemap?.tilesetPath) {
+      return;
+    }
+
+    this.load.json(this.getTilemapCacheKey(locationId), tilemap.mapPath);
+    this.load.spritesheet(this.getTilesetCacheKey(locationId), tilemap.tilesetPath, {
+      frameWidth: tilemap.tileWidth || TILE_SIZE,
+      frameHeight: tilemap.tileHeight || TILE_SIZE,
+      margin: tilemap.margin || 0,
+      spacing: tilemap.spacing || 0
+    });
+  }
+
   create() {
     this.contentErrors = [];
     this.sceneData = this.getSceneData(this.sceneId);
@@ -111,13 +130,26 @@ export class WorldScene extends Phaser.Scene {
   }
 
   buildLocation() {
-    const { map } = this.locationData;
-    const width = map.tiles[0].length * TILE_SIZE;
-    const height = map.tiles.length * TILE_SIZE;
-
     this.ground = this.add.graphics();
     this.blockers = this.physics.add.staticGroup();
     this.doors = this.physics.add.staticGroup();
+
+    const tilemap = this.getLoadedTilemap();
+    if (tilemap) {
+      this.buildTilemapLocation(tilemap);
+    } else {
+      this.buildGeneratedLocation();
+    }
+
+    asArray(this.locationData.exits)
+      .filter((exit) => this.isExitEnabled(exit))
+      .forEach((exit) => this.createExit(exit));
+  }
+
+  buildGeneratedLocation() {
+    const { map } = this.locationData;
+    const width = map.tiles[0].length * TILE_SIZE;
+    const height = map.tiles.length * TILE_SIZE;
 
     map.tiles.forEach((row, y) => {
       [...row].forEach((tile, x) => {
@@ -136,19 +168,76 @@ export class WorldScene extends Phaser.Scene {
         }
 
         if (def.blocked) {
-          const blocker = this.add.rectangle(worldX + 8, worldY + 8, TILE_SIZE, TILE_SIZE, 0x000000, 0);
-          this.physics.add.existing(blocker, true);
-          this.blockers.add(blocker);
+          this.createMapBlocker(worldX, worldY, TILE_SIZE, TILE_SIZE);
         }
       });
     });
 
     asArray(this.locationData.props).forEach((prop) => this.createProp(prop));
-    asArray(this.locationData.exits)
-      .filter((exit) => this.isExitEnabled(exit))
-      .forEach((exit) => this.createExit(exit));
-
+    this.mapPixelWidth = width;
+    this.mapPixelHeight = height;
     this.physics.world.setBounds(0, 0, width, height);
+  }
+
+  buildTilemapLocation(tilemap) {
+    const tileSize = tilemap.tileSize || TILE_SIZE;
+    const layers = asArray(tilemap.layers);
+    const firstLayer = layers.find((layer) => Array.isArray(layer.rows));
+    const width = tilemap.width || firstLayer?.rows?.[0]?.length || this.locationData.map.tiles[0].length;
+    const height = tilemap.height || firstLayer?.rows?.length || this.locationData.map.tiles.length;
+    const textureKey = this.getTilesetCacheKey(this.currentLocationId);
+    const collisionTiles = new Set(asArray(tilemap.collisionLegend));
+
+    layers.forEach((layer, layerIndex) => {
+      asArray(layer.rows).forEach((row, y) => {
+        [...row].forEach((tile, x) => {
+          const frame = tilemap.legend?.[tile] ?? -1;
+          const worldX = x * tileSize;
+          const worldY = y * tileSize;
+
+          if (frame >= 0) {
+            this.add.image(worldX + tileSize / 2, worldY + tileSize / 2, textureKey, frame)
+              .setOrigin(0.5)
+              .setDepth(layer.depth ?? layerIndex);
+          }
+
+          if (layer.collides || collisionTiles.has(tile)) {
+            this.createMapBlocker(worldX, worldY, tileSize, tileSize);
+          }
+        });
+      });
+    });
+
+    this.mapPixelWidth = width * tileSize;
+    this.mapPixelHeight = height * tileSize;
+    this.physics.world.setBounds(0, 0, this.mapPixelWidth, this.mapPixelHeight);
+  }
+
+  getLoadedTilemap() {
+    const config = this.locationData.tilemap;
+    const mapKey = this.getTilemapCacheKey(this.currentLocationId);
+    const tilesetKey = this.getTilesetCacheKey(this.currentLocationId);
+    const tilemap = this.cache.json.get(mapKey);
+
+    if (!config?.mapPath || !config?.tilesetPath || !tilemap || !this.textures.exists(tilesetKey)) {
+      return null;
+    }
+
+    return tilemap;
+  }
+
+  getTilemapCacheKey(locationId) {
+    return `tilemap:${locationId}`;
+  }
+
+  getTilesetCacheKey(locationId) {
+    return `tileset:${locationId}`;
+  }
+
+  createMapBlocker(worldX, worldY, width, height) {
+    const blocker = this.add.rectangle(worldX + width / 2, worldY + height / 2, width, height, 0x000000, 0);
+    this.physics.add.existing(blocker, true);
+    this.blockers.add(blocker);
   }
 
   drawTileTexture(worldX, worldY, def, tileX, tileY) {
@@ -413,8 +502,8 @@ export class WorldScene extends Phaser.Scene {
   }
 
   createCamera() {
-    const mapWidth = this.locationData.map.tiles[0].length * TILE_SIZE;
-    const mapHeight = this.locationData.map.tiles.length * TILE_SIZE;
+    const mapWidth = this.mapPixelWidth || this.locationData.map.tiles[0].length * TILE_SIZE;
+    const mapHeight = this.mapPixelHeight || this.locationData.map.tiles.length * TILE_SIZE;
 
     this.cameras.main.setBounds(0, 0, mapWidth, mapHeight);
     this.cameras.main.setZoom(CAMERA_ZOOM);
