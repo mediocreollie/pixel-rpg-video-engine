@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "validate-content": "node scripts/validate-content.js",
+    "extract-objects": "node scripts/extract-objects.js",
     "preview": "vite preview"
   },
   "dependencies": {
