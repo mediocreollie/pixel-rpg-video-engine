@@ -6,6 +6,9 @@
   "musicPath": "",
   "ambiencePath": "",
   "propAssetPack": "outside-route",
+  "cameraZoom": 1.65,
+  "playerScale": 0.95,
+  "propScaleMultiplier": 0.9,
   "playerSpawnPoint": "default",
   "playerSpawns": {
     "default": { "x": 4, "y": 6 }
