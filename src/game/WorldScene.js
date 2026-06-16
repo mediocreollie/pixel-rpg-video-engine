@@ -76,7 +76,7 @@ export class WorldScene extends Phaser.Scene {
     const location = this.cache.json.get(`location:${locationId}`);
     const tilemap = location?.tilemap;
 
-    if (!tilemap?.mapPath || !tilemap?.tilesetPath) {
+    if (location?.useTilemap !== true || !tilemap?.mapPath || !tilemap?.tilesetPath) {
       return;
     }
 
@@ -218,9 +218,12 @@ export class WorldScene extends Phaser.Scene {
     this.physics.world.setBounds(0, 0, width, height);
 
     this.logPubTilemapDebug('fallback:generated-renderer-used', {
-      reason: 'Tilemap JSON or tileset texture was unavailable at render time.',
+      reason: this.locationData.useTilemap === true
+        ? 'Tilemap JSON or tileset texture was unavailable at render time.'
+        : 'Location useTilemap flag is false.',
       mapPath: this.locationData.tilemap?.mapPath,
-      tilesetPath: this.locationData.tilemap?.tilesetPath
+      tilesetPath: this.locationData.tilemap?.tilesetPath,
+      useTilemap: this.locationData.useTilemap === true
     });
   }
 
@@ -308,10 +311,11 @@ export class WorldScene extends Phaser.Scene {
       tilesetImageLoaded,
       tileWidth: config?.tileWidth || TILE_SIZE,
       tileHeight: config?.tileHeight || TILE_SIZE,
-      tileset: tilesetImageLoaded ? this.getTilesetDebugInfo(tilesetKey) : null
+      tileset: tilesetImageLoaded ? this.getTilesetDebugInfo(tilesetKey) : null,
+      useTilemap: this.locationData.useTilemap === true
     });
 
-    if (!config?.mapPath || !config?.tilesetPath || !tilemap || !tilesetImageLoaded) {
+    if (this.locationData.useTilemap !== true || !config?.mapPath || !config?.tilesetPath || !tilemap || !tilesetImageLoaded) {
       return null;
     }
 
@@ -607,6 +611,10 @@ export class WorldScene extends Phaser.Scene {
     this.characterData.forEach((character, actorId) => {
       const spawn = this.locationData.npcSpawnPoints?.[character.spawnPoint];
       if (!spawn) {
+        if (this.currentLocationId === this.sceneData.destinationLocation) {
+          return;
+        }
+
         this.warnContent(`Skipped character "${actorId}" because spawn point "${character.spawnPoint}" is missing in location "${this.currentLocationId}".`);
         return;
       }
@@ -868,6 +876,7 @@ export class WorldScene extends Phaser.Scene {
       props: [],
       npcSpawnPoints: {},
       playerSpawns: { default: { x: 2, y: 2 } },
+      useTilemap: false,
       ...location
     };
   }
