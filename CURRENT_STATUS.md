@@ -78,6 +78,38 @@ Visual effect:
 
 The pub is now set up to move toward small generated or handmade tilesets. The target direction is asset-led interior composition, with generated rectangles preserved only as a resilience path while the tileset workflow settles.
 
+## Pub Tilemap Debug Pass
+
+A temporary pub-only debugging pass has been added to make the failed tileset render diagnosable in the next browser test.
+
+Runtime console logs now report:
+
+- Pub map path.
+- Pub tileset path.
+- Whether the map JSON loaded.
+- Whether the tileset texture loaded.
+- Tile width and tile height used by the Phaser spritesheet loader.
+- Tileset image width, image height, frame count, and first frame names as Phaser sees them.
+- Number of map layers and objects.
+- Number of rendered tiles.
+- Unique map symbols and frame IDs.
+- The first 20 tile frame IDs being rendered.
+- Whether the highest frame ID used by the map fits inside the loaded tileset frame count.
+
+A temporary visual overlay now draws tile grid lines, map bounds, player spawn, and door markers when the pub tilemap renderer is active.
+
+Static map inspection:
+
+- `public/maps/pub_mvp.json` expects `tileSize: 16`.
+- Its legend maps visible tiles to frame IDs `0` through `7`, with `-1` used for empty overlay cells.
+- The map contains varied tile symbols and frame IDs; it is not only one repeated tile.
+
+Tileset slicing status:
+
+- The GitHub API confirms `public/assets/tilesets/pub_mvp_tileset.png` is a binary PNG file.
+- Static GitHub file reads do not expose the image dimensions in this session.
+- The next browser test should use the `[PubTilemapDebug]` logs to verify whether the PNG is grid-sliceable as 16x16 tiles. If the logged image dimensions are not divisible by 16, or if the logged frame count is less than or equal to the highest frame ID used by the map, the current tileset image is not compatible with the map's 16x16 frame IDs.
+
 ## Untested Due To Sandbox Command Issue
 
 The local command runner is still blocked before npm can start with:
@@ -133,4 +165,4 @@ GitHub Actions validation/build has been added separately through `.github/workf
 
 ## Next Recommended Task
 
-Run GitHub Actions and manually check the Pub Friend pub interior before expanding beach or gym content.
+Run the Pub Friend browser test with the console open and inspect the `[PubTilemapDebug]` output before changing renderer logic or artwork.
