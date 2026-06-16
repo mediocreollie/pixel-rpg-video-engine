@@ -25,6 +25,9 @@
 - Missing named pub PNGs fall back to generated shape props instead of crashing the scene.
 - The object extraction and promotion scripts now support separate scene packs for `pub`, `outside-route`, `beach`, `park`, and `cafe`.
 - Each supported scene pack has an independent `public/assets/props/<pack>/selected-props.json` promotion map.
+- The town starting area now acts as a first outside-route / town-edge connector scene using promoted named PNGs from `public/assets/props/outside-route/`.
+- The outside-route connector keeps the Pub Friend pub-door coordinates and Jack path intact while replacing obvious route placeholders with asset-led foliage, paths, signs, bench, mailbox, fence, and building edge pieces.
+- `WorldScene` now supports location-level prop asset packs through `propAssetPack`, so future connector locations can use named production assets without borrowing pub texture keys.
 - The camera remains player-follow only and is constrained to the active map bounds.
 - `Escape` returns from gameplay to the scene selector.
 - `R` restarts the current gameplay scene while gameplay is active.
@@ -99,6 +102,22 @@ What changed:
 Visual effect:
 
 The pub should now read less like rectangle placeholders and more like a DS-era RPG interior built from reusable object sprites, while preserving the Pub Friend flow, dialogue, player movement, camera follow, and punchline reveal.
+
+## Outside-Route Connector Pass
+
+The first asset-led town-edge connector scene is now wired into the existing `town` starting location.
+
+What changed:
+
+- Added generic location prop-pack loading in `WorldScene`.
+- `public/locations/town.json` now sets `propAssetPack: "outside-route"`.
+- The town route places promoted outside-route PNGs for grass variation, sand path pieces, pavement, a route sign, lamp post, signpost, notice board, fences, hedges, bushes, trees, rocks, bench, mailbox, windows, doorway, and brick wall pieces.
+- The current Pub Friend flow still starts in town, keeps Jack at `townCenter`, keeps the scripted walk toward `x:14, y:4`, and keeps the `pubDoor` exit pointing to the pub.
+- The connector is intentionally first-pass and readable rather than final-polished; scale and camera tuning are left for a later visual pass.
+
+Visual effect:
+
+The starting area should now feel more like a small Pokémon / DS-era town edge route leading to destination scenes, while still preserving the original Pub Friend scene structure.
 
 ## Multi-Scene Object Workflow
 
@@ -187,29 +206,30 @@ GitHub Actions validation/build has been added separately through `.github/workf
 9. Press `Space` or `Enter` to start Pub Friend.
 10. Confirm the title card appears.
 11. Press `Space` or wait for the title card duration.
-12. Confirm town loads and the player appears.
-13. Confirm Jack appears near the player.
-14. Walk around town and confirm the camera follows the player without showing outside the map.
-15. Stand near Jack and press `Space` or `Enter`.
-16. Confirm the DS-era dialogue box opens.
-17. Confirm the typewriter effect runs.
-18. Press `Space` mid-line and confirm the line completes instantly.
-19. Press `Space` again and confirm dialogue closes.
-20. Confirm Jack starts walking toward the pub door.
-21. Follow Jack and confirm the player can move freely along the route.
-22. Walk into the highlighted pub door.
-23. Confirm the pub interior loads.
-24. Confirm the pub uses the generated renderer by default and shows no random sliced tile fragments.
-25. Confirm the pub displays named production PNG props when those files are available.
-26. Confirm the beer punchline is visually obvious.
-27. Confirm no missing `townCenter` spawn warning appears in the pub.
-28. Press `Escape` and confirm the scene selector returns.
-29. Start Pub Friend again and confirm the scene still loads.
-30. Start Pub Friend, press `R`, and confirm the scene restarts.
-31. Press `H` and confirm the recording overlay hides/shows.
-32. Press `?` and confirm the controls screen opens.
-33. Toggle 9:16 canvas mode and repeat the key checks for readability.
+12. Confirm town loads as the outside-route / town-edge connector area.
+13. Confirm the player appears.
+14. Confirm Jack appears near the player.
+15. Walk around town and confirm the camera follows the player without showing outside the map.
+16. Stand near Jack and press `Space` or `Enter`.
+17. Confirm the DS-era dialogue box opens.
+18. Confirm the typewriter effect runs.
+19. Press `Space` mid-line and confirm the line completes instantly.
+20. Press `Space` again and confirm dialogue closes.
+21. Confirm Jack starts walking toward the pub door through the connector route.
+22. Follow Jack and confirm the player can move freely along the route.
+23. Walk into the highlighted pub door.
+24. Confirm the pub interior loads.
+25. Confirm the pub uses the generated renderer by default and shows no random sliced tile fragments.
+26. Confirm the pub displays named production PNG props when those files are available.
+27. Confirm the beer punchline is visually obvious.
+28. Confirm no missing `townCenter` spawn warning appears in the pub.
+29. Press `Escape` and confirm the scene selector returns.
+30. Start Pub Friend again and confirm the scene still loads.
+31. Start Pub Friend, press `R`, and confirm the scene restarts.
+32. Press `H` and confirm the recording overlay hides/shows.
+33. Press `?` and confirm the controls screen opens.
+34. Toggle 9:16 canvas mode and repeat the key checks for readability.
 
 ## Next Recommended Task
 
-Run the Pub Friend browser test to confirm the generated pub is stable with the new object-atlas props, then tune object scale and placement based on a real screenshot before adding more assets.
+Run the Pub Friend browser test to confirm the outside-route connector and generated pub both remain stable, then tune route prop scale and path readability from a real screenshot before wiring other destination scenes.
