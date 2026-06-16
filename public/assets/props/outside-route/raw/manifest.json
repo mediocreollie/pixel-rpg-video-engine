@@ -1,0 +1,1566 @@
+{
+  "scenePack": "outside-route",
+  "source": "references/source-sheets/outside_route_object_sheet.png",
+  "outputDir": "public/assets/props/outside-route/raw",
+  "generatedAt": "2026-06-16T12:57:49.789Z",
+  "settings": {
+    "padding": 2,
+    "minPixels": 32,
+    "alphaThreshold": 8,
+    "connectivity": 8
+  },
+  "sourceImage": {
+    "width": 1254,
+    "height": 1254
+  },
+  "objects": [
+    {
+      "filename": "object_001.png",
+      "width": 129,
+      "height": 133,
+      "sourceBoundingBox": {
+        "x": 980,
+        "y": 14,
+        "width": 125,
+        "height": 129
+      },
+      "paddedBoundingBox": {
+        "x": 978,
+        "y": 12,
+        "width": 129,
+        "height": 133
+      },
+      "pixelCount": 15494
+    },
+    {
+      "filename": "object_002.png",
+      "width": 127,
+      "height": 130,
+      "sourceBoundingBox": {
+        "x": 18,
+        "y": 15,
+        "width": 123,
+        "height": 126
+      },
+      "paddedBoundingBox": {
+        "x": 16,
+        "y": 13,
+        "width": 127,
+        "height": 130
+      },
+      "pixelCount": 14982
+    },
+    {
+      "filename": "object_003.png",
+      "width": 126,
+      "height": 131,
+      "sourceBoundingBox": {
+        "x": 151,
+        "y": 15,
+        "width": 122,
+        "height": 127
+      },
+      "paddedBoundingBox": {
+        "x": 149,
+        "y": 13,
+        "width": 126,
+        "height": 131
+      },
+      "pixelCount": 14779
+    },
+    {
+      "filename": "object_004.png",
+      "width": 128,
+      "height": 131,
+      "sourceBoundingBox": {
+        "x": 282,
+        "y": 15,
+        "width": 124,
+        "height": 127
+      },
+      "paddedBoundingBox": {
+        "x": 280,
+        "y": 13,
+        "width": 128,
+        "height": 131
+      },
+      "pixelCount": 14799
+    },
+    {
+      "filename": "object_005.png",
+      "width": 131,
+      "height": 132,
+      "sourceBoundingBox": {
+        "x": 419,
+        "y": 15,
+        "width": 127,
+        "height": 128
+      },
+      "paddedBoundingBox": {
+        "x": 417,
+        "y": 13,
+        "width": 131,
+        "height": 132
+      },
+      "pixelCount": 15483
+    },
+    {
+      "filename": "object_006.png",
+      "width": 274,
+      "height": 283,
+      "sourceBoundingBox": {
+        "x": 560,
+        "y": 15,
+        "width": 270,
+        "height": 279
+      },
+      "paddedBoundingBox": {
+        "x": 558,
+        "y": 13,
+        "width": 274,
+        "height": 283
+      },
+      "pixelCount": 45020
+    },
+    {
+      "filename": "object_007.png",
+      "width": 133,
+      "height": 132,
+      "sourceBoundingBox": {
+        "x": 700,
+        "y": 15,
+        "width": 129,
+        "height": 128
+      },
+      "paddedBoundingBox": {
+        "x": 698,
+        "y": 13,
+        "width": 133,
+        "height": 132
+      },
+      "pixelCount": 15867
+    },
+    {
+      "filename": "object_008.png",
+      "width": 124,
+      "height": 222,
+      "sourceBoundingBox": {
+        "x": 845,
+        "y": 15,
+        "width": 120,
+        "height": 218
+      },
+      "paddedBoundingBox": {
+        "x": 843,
+        "y": 13,
+        "width": 124,
+        "height": 222
+      },
+      "pixelCount": 25196
+    },
+    {
+      "filename": "object_009.png",
+      "width": 56,
+      "height": 128,
+      "sourceBoundingBox": {
+        "x": 1118,
+        "y": 18,
+        "width": 52,
+        "height": 124
+      },
+      "paddedBoundingBox": {
+        "x": 1116,
+        "y": 16,
+        "width": 56,
+        "height": 128
+      },
+      "pixelCount": 5315
+    },
+    {
+      "filename": "object_010.png",
+      "width": 53,
+      "height": 128,
+      "sourceBoundingBox": {
+        "x": 1190,
+        "y": 18,
+        "width": 49,
+        "height": 124
+      },
+      "paddedBoundingBox": {
+        "x": 1188,
+        "y": 16,
+        "width": 53,
+        "height": 128
+      },
+      "pixelCount": 5234
+    },
+    {
+      "filename": "object_011.png",
+      "width": 127,
+      "height": 149,
+      "sourceBoundingBox": {
+        "x": 18,
+        "y": 149,
+        "width": 123,
+        "height": 145
+      },
+      "paddedBoundingBox": {
+        "x": 16,
+        "y": 147,
+        "width": 127,
+        "height": 149
+      },
+      "pixelCount": 16625
+    },
+    {
+      "filename": "object_012.png",
+      "width": 127,
+      "height": 146,
+      "sourceBoundingBox": {
+        "x": 150,
+        "y": 152,
+        "width": 123,
+        "height": 142
+      },
+      "paddedBoundingBox": {
+        "x": 148,
+        "y": 150,
+        "width": 127,
+        "height": 146
+      },
+      "pixelCount": 16594
+    },
+    {
+      "filename": "object_013.png",
+      "width": 130,
+      "height": 146,
+      "sourceBoundingBox": {
+        "x": 282,
+        "y": 152,
+        "width": 126,
+        "height": 142
+      },
+      "paddedBoundingBox": {
+        "x": 280,
+        "y": 150,
+        "width": 130,
+        "height": 146
+      },
+      "pixelCount": 16477
+    },
+    {
+      "filename": "object_014.png",
+      "width": 130,
+      "height": 145,
+      "sourceBoundingBox": {
+        "x": 419,
+        "y": 153,
+        "width": 126,
+        "height": 141
+      },
+      "paddedBoundingBox": {
+        "x": 417,
+        "y": 151,
+        "width": 130,
+        "height": 145
+      },
+      "pixelCount": 16405
+    },
+    {
+      "filename": "object_015.png",
+      "width": 127,
+      "height": 93,
+      "sourceBoundingBox": {
+        "x": 1118,
+        "y": 156,
+        "width": 123,
+        "height": 89
+      },
+      "paddedBoundingBox": {
+        "x": 1116,
+        "y": 154,
+        "width": 127,
+        "height": 93
+      },
+      "pixelCount": 7588
+    },
+    {
+      "filename": "object_016.png",
+      "width": 35,
+      "height": 32,
+      "sourceBoundingBox": {
+        "x": 981,
+        "y": 159,
+        "width": 31,
+        "height": 28
+      },
+      "paddedBoundingBox": {
+        "x": 979,
+        "y": 157,
+        "width": 35,
+        "height": 32
+      },
+      "pixelCount": 687
+    },
+    {
+      "filename": "object_017.png",
+      "width": 38,
+      "height": 32,
+      "sourceBoundingBox": {
+        "x": 1020,
+        "y": 159,
+        "width": 34,
+        "height": 28
+      },
+      "paddedBoundingBox": {
+        "x": 1018,
+        "y": 157,
+        "width": 38,
+        "height": 32
+      },
+      "pixelCount": 552
+    },
+    {
+      "filename": "object_018.png",
+      "width": 33,
+      "height": 38,
+      "sourceBoundingBox": {
+        "x": 1074,
+        "y": 165,
+        "width": 29,
+        "height": 34
+      },
+      "paddedBoundingBox": {
+        "x": 1072,
+        "y": 163,
+        "width": 33,
+        "height": 38
+      },
+      "pixelCount": 690
+    },
+    {
+      "filename": "object_019.png",
+      "width": 31,
+      "height": 23,
+      "sourceBoundingBox": {
+        "x": 1046,
+        "y": 189,
+        "width": 27,
+        "height": 19
+      },
+      "paddedBoundingBox": {
+        "x": 1044,
+        "y": 187,
+        "width": 31,
+        "height": 23
+      },
+      "pixelCount": 431
+    },
+    {
+      "filename": "object_020.png",
+      "width": 36,
+      "height": 32,
+      "sourceBoundingBox": {
+        "x": 987,
+        "y": 193,
+        "width": 32,
+        "height": 28
+      },
+      "paddedBoundingBox": {
+        "x": 985,
+        "y": 191,
+        "width": 36,
+        "height": 32
+      },
+      "pixelCount": 617
+    },
+    {
+      "filename": "object_021.png",
+      "width": 26,
+      "height": 25,
+      "sourceBoundingBox": {
+        "x": 1068,
+        "y": 208,
+        "width": 22,
+        "height": 21
+      },
+      "paddedBoundingBox": {
+        "x": 1066,
+        "y": 206,
+        "width": 26,
+        "height": 25
+      },
+      "pixelCount": 338
+    },
+    {
+      "filename": "object_022.png",
+      "width": 26,
+      "height": 27,
+      "sourceBoundingBox": {
+        "x": 1022,
+        "y": 210,
+        "width": 22,
+        "height": 23
+      },
+      "paddedBoundingBox": {
+        "x": 1020,
+        "y": 208,
+        "width": 26,
+        "height": 27
+      },
+      "pixelCount": 408
+    },
+    {
+      "filename": "object_023.png",
+      "width": 18,
+      "height": 19,
+      "sourceBoundingBox": {
+        "x": 999,
+        "y": 222,
+        "width": 14,
+        "height": 15
+      },
+      "paddedBoundingBox": {
+        "x": 997,
+        "y": 220,
+        "width": 18,
+        "height": 19
+      },
+      "pixelCount": 150
+    },
+    {
+      "filename": "object_024.png",
+      "width": 72,
+      "height": 67,
+      "sourceBoundingBox": {
+        "x": 723,
+        "y": 243,
+        "width": 68,
+        "height": 63
+      },
+      "paddedBoundingBox": {
+        "x": 721,
+        "y": 241,
+        "width": 72,
+        "height": 67
+      },
+      "pixelCount": 3230
+    },
+    {
+      "filename": "object_025.png",
+      "width": 70,
+      "height": 63,
+      "sourceBoundingBox": {
+        "x": 891,
+        "y": 247,
+        "width": 66,
+        "height": 59
+      },
+      "paddedBoundingBox": {
+        "x": 889,
+        "y": 245,
+        "width": 70,
+        "height": 63
+      },
+      "pixelCount": 2728
+    },
+    {
+      "filename": "object_026.png",
+      "width": 127,
+      "height": 62,
+      "sourceBoundingBox": {
+        "x": 984,
+        "y": 247,
+        "width": 123,
+        "height": 58
+      },
+      "paddedBoundingBox": {
+        "x": 982,
+        "y": 245,
+        "width": 127,
+        "height": 62
+      },
+      "pixelCount": 5047
+    },
+    {
+      "filename": "object_027.png",
+      "width": 69,
+      "height": 62,
+      "sourceBoundingBox": {
+        "x": 810,
+        "y": 248,
+        "width": 65,
+        "height": 58
+      },
+      "paddedBoundingBox": {
+        "x": 808,
+        "y": 246,
+        "width": 69,
+        "height": 62
+      },
+      "pixelCount": 2739
+    },
+    {
+      "filename": "object_028.png",
+      "width": 253,
+      "height": 174,
+      "sourceBoundingBox": {
+        "x": 21,
+        "y": 317,
+        "width": 249,
+        "height": 170
+      },
+      "paddedBoundingBox": {
+        "x": 19,
+        "y": 315,
+        "width": 253,
+        "height": 174
+      },
+      "pixelCount": 40057
+    },
+    {
+      "filename": "object_029.png",
+      "width": 121,
+      "height": 173,
+      "sourceBoundingBox": {
+        "x": 287,
+        "y": 317,
+        "width": 117,
+        "height": 169
+      },
+      "paddedBoundingBox": {
+        "x": 285,
+        "y": 315,
+        "width": 121,
+        "height": 173
+      },
+      "pixelCount": 19705
+    },
+    {
+      "filename": "object_030.png",
+      "width": 123,
+      "height": 174,
+      "sourceBoundingBox": {
+        "x": 422,
+        "y": 318,
+        "width": 119,
+        "height": 170
+      },
+      "paddedBoundingBox": {
+        "x": 420,
+        "y": 316,
+        "width": 123,
+        "height": 174
+      },
+      "pixelCount": 16437
+    },
+    {
+      "filename": "object_031.png",
+      "width": 109,
+      "height": 56,
+      "sourceBoundingBox": {
+        "x": 556,
+        "y": 320,
+        "width": 105,
+        "height": 52
+      },
+      "paddedBoundingBox": {
+        "x": 554,
+        "y": 318,
+        "width": 109,
+        "height": 56
+      },
+      "pixelCount": 4188
+    },
+    {
+      "filename": "object_032.png",
+      "width": 82,
+      "height": 166,
+      "sourceBoundingBox": {
+        "x": 1142,
+        "y": 320,
+        "width": 78,
+        "height": 162
+      },
+      "paddedBoundingBox": {
+        "x": 1140,
+        "y": 318,
+        "width": 82,
+        "height": 166
+      },
+      "pixelCount": 7304
+    },
+    {
+      "filename": "object_033.png",
+      "width": 61,
+      "height": 165,
+      "sourceBoundingBox": {
+        "x": 792,
+        "y": 321,
+        "width": 57,
+        "height": 161
+      },
+      "paddedBoundingBox": {
+        "x": 790,
+        "y": 319,
+        "width": 61,
+        "height": 165
+      },
+      "pixelCount": 5575
+    },
+    {
+      "filename": "object_034.png",
+      "width": 58,
+      "height": 166,
+      "sourceBoundingBox": {
+        "x": 1035,
+        "y": 321,
+        "width": 54,
+        "height": 162
+      },
+      "paddedBoundingBox": {
+        "x": 1033,
+        "y": 319,
+        "width": 58,
+        "height": 166
+      },
+      "pixelCount": 6281
+    },
+    {
+      "filename": "object_035.png",
+      "width": 97,
+      "height": 159,
+      "sourceBoundingBox": {
+        "x": 690,
+        "y": 329,
+        "width": 93,
+        "height": 155
+      },
+      "paddedBoundingBox": {
+        "x": 688,
+        "y": 327,
+        "width": 97,
+        "height": 159
+      },
+      "pixelCount": 7964
+    },
+    {
+      "filename": "object_036.png",
+      "width": 137,
+      "height": 148,
+      "sourceBoundingBox": {
+        "x": 878,
+        "y": 332,
+        "width": 133,
+        "height": 144
+      },
+      "paddedBoundingBox": {
+        "x": 876,
+        "y": 330,
+        "width": 137,
+        "height": 148
+      },
+      "pixelCount": 15913
+    },
+    {
+      "filename": "object_037.png",
+      "width": 108,
+      "height": 97,
+      "sourceBoundingBox": {
+        "x": 557,
+        "y": 387,
+        "width": 104,
+        "height": 93
+      },
+      "paddedBoundingBox": {
+        "x": 555,
+        "y": 385,
+        "width": 108,
+        "height": 97
+      },
+      "pixelCount": 7820
+    },
+    {
+      "filename": "object_038.png",
+      "width": 115,
+      "height": 139,
+      "sourceBoundingBox": {
+        "x": 602,
+        "y": 492,
+        "width": 111,
+        "height": 135
+      },
+      "paddedBoundingBox": {
+        "x": 600,
+        "y": 490,
+        "width": 115,
+        "height": 139
+      },
+      "pixelCount": 10936
+    },
+    {
+      "filename": "object_039.png",
+      "width": 112,
+      "height": 135,
+      "sourceBoundingBox": {
+        "x": 723,
+        "y": 492,
+        "width": 108,
+        "height": 131
+      },
+      "paddedBoundingBox": {
+        "x": 721,
+        "y": 490,
+        "width": 112,
+        "height": 135
+      },
+      "pixelCount": 9963
+    },
+    {
+      "filename": "object_040.png",
+      "width": 109,
+      "height": 127,
+      "sourceBoundingBox": {
+        "x": 852,
+        "y": 496,
+        "width": 105,
+        "height": 123
+      },
+      "paddedBoundingBox": {
+        "x": 850,
+        "y": 494,
+        "width": 109,
+        "height": 127
+      },
+      "pixelCount": 9625
+    },
+    {
+      "filename": "object_041.png",
+      "width": 111,
+      "height": 121,
+      "sourceBoundingBox": {
+        "x": 970,
+        "y": 498,
+        "width": 107,
+        "height": 117
+      },
+      "paddedBoundingBox": {
+        "x": 968,
+        "y": 496,
+        "width": 111,
+        "height": 121
+      },
+      "pixelCount": 9133
+    },
+    {
+      "filename": "object_042.png",
+      "width": 195,
+      "height": 127,
+      "sourceBoundingBox": {
+        "x": 401,
+        "y": 503,
+        "width": 191,
+        "height": 123
+      },
+      "paddedBoundingBox": {
+        "x": 399,
+        "y": 501,
+        "width": 195,
+        "height": 127
+      },
+      "pixelCount": 21431
+    },
+    {
+      "filename": "object_043.png",
+      "width": 122,
+      "height": 122,
+      "sourceBoundingBox": {
+        "x": 18,
+        "y": 505,
+        "width": 118,
+        "height": 118
+      },
+      "paddedBoundingBox": {
+        "x": 16,
+        "y": 503,
+        "width": 122,
+        "height": 122
+      },
+      "pixelCount": 10600
+    },
+    {
+      "filename": "object_044.png",
+      "width": 120,
+      "height": 120,
+      "sourceBoundingBox": {
+        "x": 1093,
+        "y": 505,
+        "width": 116,
+        "height": 116
+      },
+      "paddedBoundingBox": {
+        "x": 1091,
+        "y": 503,
+        "width": 120,
+        "height": 120
+      },
+      "pixelCount": 9310
+    },
+    {
+      "filename": "object_045.png",
+      "width": 123,
+      "height": 122,
+      "sourceBoundingBox": {
+        "x": 142,
+        "y": 507,
+        "width": 119,
+        "height": 118
+      },
+      "paddedBoundingBox": {
+        "x": 140,
+        "y": 505,
+        "width": 123,
+        "height": 122
+      },
+      "pixelCount": 10822
+    },
+    {
+      "filename": "object_046.png",
+      "width": 128,
+      "height": 121,
+      "sourceBoundingBox": {
+        "x": 266,
+        "y": 509,
+        "width": 124,
+        "height": 117
+      },
+      "paddedBoundingBox": {
+        "x": 264,
+        "y": 507,
+        "width": 128,
+        "height": 121
+      },
+      "pixelCount": 11210
+    },
+    {
+      "filename": "object_047.png",
+      "width": 96,
+      "height": 90,
+      "sourceBoundingBox": {
+        "x": 863,
+        "y": 635,
+        "width": 92,
+        "height": 86
+      },
+      "paddedBoundingBox": {
+        "x": 861,
+        "y": 633,
+        "width": 96,
+        "height": 90
+      },
+      "pixelCount": 5826
+    },
+    {
+      "filename": "object_048.png",
+      "width": 106,
+      "height": 88,
+      "sourceBoundingBox": {
+        "x": 142,
+        "y": 637,
+        "width": 102,
+        "height": 84
+      },
+      "paddedBoundingBox": {
+        "x": 140,
+        "y": 635,
+        "width": 106,
+        "height": 88
+      },
+      "pixelCount": 7385
+    },
+    {
+      "filename": "object_049.png",
+      "width": 101,
+      "height": 85,
+      "sourceBoundingBox": {
+        "x": 382,
+        "y": 640,
+        "width": 97,
+        "height": 81
+      },
+      "paddedBoundingBox": {
+        "x": 380,
+        "y": 638,
+        "width": 101,
+        "height": 85
+      },
+      "pixelCount": 6512
+    },
+    {
+      "filename": "object_050.png",
+      "width": 105,
+      "height": 83,
+      "sourceBoundingBox": {
+        "x": 22,
+        "y": 641,
+        "width": 101,
+        "height": 79
+      },
+      "paddedBoundingBox": {
+        "x": 20,
+        "y": 639,
+        "width": 105,
+        "height": 83
+      },
+      "pixelCount": 7040
+    },
+    {
+      "filename": "object_051.png",
+      "width": 100,
+      "height": 84,
+      "sourceBoundingBox": {
+        "x": 266,
+        "y": 641,
+        "width": 96,
+        "height": 80
+      },
+      "paddedBoundingBox": {
+        "x": 264,
+        "y": 639,
+        "width": 100,
+        "height": 84
+      },
+      "pixelCount": 6528
+    },
+    {
+      "filename": "object_052.png",
+      "width": 47,
+      "height": 52,
+      "sourceBoundingBox": {
+        "x": 1059,
+        "y": 644,
+        "width": 43,
+        "height": 48
+      },
+      "paddedBoundingBox": {
+        "x": 1057,
+        "y": 642,
+        "width": 47,
+        "height": 52
+      },
+      "pixelCount": 1628
+    },
+    {
+      "filename": "object_053.png",
+      "width": 85,
+      "height": 76,
+      "sourceBoundingBox": {
+        "x": 505,
+        "y": 645,
+        "width": 81,
+        "height": 72
+      },
+      "paddedBoundingBox": {
+        "x": 503,
+        "y": 643,
+        "width": 85,
+        "height": 76
+      },
+      "pixelCount": 4342
+    },
+    {
+      "filename": "object_054.png",
+      "width": 70,
+      "height": 64,
+      "sourceBoundingBox": {
+        "x": 730,
+        "y": 649,
+        "width": 66,
+        "height": 60
+      },
+      "paddedBoundingBox": {
+        "x": 728,
+        "y": 647,
+        "width": 70,
+        "height": 64
+      },
+      "pixelCount": 2062
+    },
+    {
+      "filename": "object_055.png",
+      "width": 75,
+      "height": 68,
+      "sourceBoundingBox": {
+        "x": 1146,
+        "y": 649,
+        "width": 71,
+        "height": 64
+      },
+      "paddedBoundingBox": {
+        "x": 1144,
+        "y": 647,
+        "width": 75,
+        "height": 68
+      },
+      "pixelCount": 2147
+    },
+    {
+      "filename": "object_056.png",
+      "width": 77,
+      "height": 71,
+      "sourceBoundingBox": {
+        "x": 620,
+        "y": 650,
+        "width": 73,
+        "height": 67
+      },
+      "paddedBoundingBox": {
+        "x": 618,
+        "y": 648,
+        "width": 77,
+        "height": 71
+      },
+      "pixelCount": 3816
+    },
+    {
+      "filename": "object_057.png",
+      "width": 31,
+      "height": 30,
+      "sourceBoundingBox": {
+        "x": 988,
+        "y": 674,
+        "width": 27,
+        "height": 26
+      },
+      "paddedBoundingBox": {
+        "x": 986,
+        "y": 672,
+        "width": 31,
+        "height": 30
+      },
+      "pixelCount": 499
+    },
+    {
+      "filename": "object_058.png",
+      "width": 27,
+      "height": 23,
+      "sourceBoundingBox": {
+        "x": 1042,
+        "y": 686,
+        "width": 23,
+        "height": 19
+      },
+      "paddedBoundingBox": {
+        "x": 1040,
+        "y": 684,
+        "width": 27,
+        "height": 23
+      },
+      "pixelCount": 345
+    },
+    {
+      "filename": "object_059.png",
+      "width": 97,
+      "height": 121,
+      "sourceBoundingBox": {
+        "x": 731,
+        "y": 736,
+        "width": 93,
+        "height": 117
+      },
+      "paddedBoundingBox": {
+        "x": 729,
+        "y": 734,
+        "width": 97,
+        "height": 121
+      },
+      "pixelCount": 9114
+    },
+    {
+      "filename": "object_060.png",
+      "width": 80,
+      "height": 115,
+      "sourceBoundingBox": {
+        "x": 256,
+        "y": 739,
+        "width": 76,
+        "height": 111
+      },
+      "paddedBoundingBox": {
+        "x": 254,
+        "y": 737,
+        "width": 80,
+        "height": 115
+      },
+      "pixelCount": 7216
+    },
+    {
+      "filename": "object_061.png",
+      "width": 73,
+      "height": 116,
+      "sourceBoundingBox": {
+        "x": 374,
+        "y": 739,
+        "width": 69,
+        "height": 112
+      },
+      "paddedBoundingBox": {
+        "x": 372,
+        "y": 737,
+        "width": 73,
+        "height": 116
+      },
+      "pixelCount": 6615
+    },
+    {
+      "filename": "object_062.png",
+      "width": 197,
+      "height": 116,
+      "sourceBoundingBox": {
+        "x": 27,
+        "y": 740,
+        "width": 193,
+        "height": 112
+      },
+      "paddedBoundingBox": {
+        "x": 25,
+        "y": 738,
+        "width": 197,
+        "height": 116
+      },
+      "pixelCount": 17681
+    },
+    {
+      "filename": "object_063.png",
+      "width": 91,
+      "height": 117,
+      "sourceBoundingBox": {
+        "x": 488,
+        "y": 740,
+        "width": 87,
+        "height": 113
+      },
+      "paddedBoundingBox": {
+        "x": 486,
+        "y": 738,
+        "width": 91,
+        "height": 117
+      },
+      "pixelCount": 9703
+    },
+    {
+      "filename": "object_064.png",
+      "width": 95,
+      "height": 113,
+      "sourceBoundingBox": {
+        "x": 606,
+        "y": 740,
+        "width": 91,
+        "height": 109
+      },
+      "paddedBoundingBox": {
+        "x": 604,
+        "y": 738,
+        "width": 95,
+        "height": 113
+      },
+      "pixelCount": 9912
+    },
+    {
+      "filename": "object_065.png",
+      "width": 184,
+      "height": 111,
+      "sourceBoundingBox": {
+        "x": 1051,
+        "y": 749,
+        "width": 180,
+        "height": 107
+      },
+      "paddedBoundingBox": {
+        "x": 1049,
+        "y": 747,
+        "width": 184,
+        "height": 111
+      },
+      "pixelCount": 17906
+    },
+    {
+      "filename": "object_066.png",
+      "width": 167,
+      "height": 82,
+      "sourceBoundingBox": {
+        "x": 854,
+        "y": 762,
+        "width": 163,
+        "height": 78
+      },
+      "paddedBoundingBox": {
+        "x": 852,
+        "y": 760,
+        "width": 167,
+        "height": 82
+      },
+      "pixelCount": 11280
+    },
+    {
+      "filename": "object_067.png",
+      "width": 133,
+      "height": 163,
+      "sourceBoundingBox": {
+        "x": 930,
+        "y": 863,
+        "width": 129,
+        "height": 159
+      },
+      "paddedBoundingBox": {
+        "x": 928,
+        "y": 861,
+        "width": 133,
+        "height": 163
+      },
+      "pixelCount": 13651
+    },
+    {
+      "filename": "object_068.png",
+      "width": 59,
+      "height": 156,
+      "sourceBoundingBox": {
+        "x": 623,
+        "y": 871,
+        "width": 55,
+        "height": 152
+      },
+      "paddedBoundingBox": {
+        "x": 621,
+        "y": 869,
+        "width": 59,
+        "height": 156
+      },
+      "pixelCount": 7398
+    },
+    {
+      "filename": "object_069.png",
+      "width": 209,
+      "height": 150,
+      "sourceBoundingBox": {
+        "x": 18,
+        "y": 872,
+        "width": 205,
+        "height": 146
+      },
+      "paddedBoundingBox": {
+        "x": 16,
+        "y": 870,
+        "width": 209,
+        "height": 150
+      },
+      "pixelCount": 27821
+    },
+    {
+      "filename": "object_070.png",
+      "width": 74,
+      "height": 150,
+      "sourceBoundingBox": {
+        "x": 522,
+        "y": 872,
+        "width": 70,
+        "height": 146
+      },
+      "paddedBoundingBox": {
+        "x": 520,
+        "y": 870,
+        "width": 74,
+        "height": 150
+      },
+      "pixelCount": 9423
+    },
+    {
+      "filename": "object_071.png",
+      "width": 122,
+      "height": 148,
+      "sourceBoundingBox": {
+        "x": 240,
+        "y": 875,
+        "width": 118,
+        "height": 144
+      },
+      "paddedBoundingBox": {
+        "x": 238,
+        "y": 873,
+        "width": 122,
+        "height": 148
+      },
+      "pixelCount": 14122
+    },
+    {
+      "filename": "object_072.png",
+      "width": 112,
+      "height": 150,
+      "sourceBoundingBox": {
+        "x": 380,
+        "y": 875,
+        "width": 108,
+        "height": 146
+      },
+      "paddedBoundingBox": {
+        "x": 378,
+        "y": 873,
+        "width": 112,
+        "height": 150
+      },
+      "pixelCount": 14966
+    },
+    {
+      "filename": "object_073.png",
+      "width": 186,
+      "height": 152,
+      "sourceBoundingBox": {
+        "x": 716,
+        "y": 875,
+        "width": 182,
+        "height": 148
+      },
+      "paddedBoundingBox": {
+        "x": 714,
+        "y": 873,
+        "width": 186,
+        "height": 152
+      },
+      "pixelCount": 26754
+    },
+    {
+      "filename": "object_074.png",
+      "width": 154,
+      "height": 141,
+      "sourceBoundingBox": {
+        "x": 1078,
+        "y": 887,
+        "width": 150,
+        "height": 137
+      },
+      "paddedBoundingBox": {
+        "x": 1076,
+        "y": 885,
+        "width": 154,
+        "height": 141
+      },
+      "pixelCount": 17292
+    },
+    {
+      "filename": "object_075.png",
+      "width": 115,
+      "height": 194,
+      "sourceBoundingBox": {
+        "x": 18,
+        "y": 1041,
+        "width": 111,
+        "height": 190
+      },
+      "paddedBoundingBox": {
+        "x": 16,
+        "y": 1039,
+        "width": 115,
+        "height": 194
+      },
+      "pixelCount": 19879
+    },
+    {
+      "filename": "object_076.png",
+      "width": 109,
+      "height": 192,
+      "sourceBoundingBox": {
+        "x": 161,
+        "y": 1043,
+        "width": 105,
+        "height": 188
+      },
+      "paddedBoundingBox": {
+        "x": 159,
+        "y": 1041,
+        "width": 109,
+        "height": 192
+      },
+      "pixelCount": 18593
+    },
+    {
+      "filename": "object_077.png",
+      "width": 125,
+      "height": 196,
+      "sourceBoundingBox": {
+        "x": 290,
+        "y": 1043,
+        "width": 121,
+        "height": 192
+      },
+      "paddedBoundingBox": {
+        "x": 288,
+        "y": 1041,
+        "width": 125,
+        "height": 196
+      },
+      "pixelCount": 20769
+    },
+    {
+      "filename": "object_078.png",
+      "width": 152,
+      "height": 97,
+      "sourceBoundingBox": {
+        "x": 432,
+        "y": 1047,
+        "width": 148,
+        "height": 93
+      },
+      "paddedBoundingBox": {
+        "x": 430,
+        "y": 1045,
+        "width": 152,
+        "height": 97
+      },
+      "pixelCount": 11381
+    },
+    {
+      "filename": "object_079.png",
+      "width": 157,
+      "height": 185,
+      "sourceBoundingBox": {
+        "x": 604,
+        "y": 1054,
+        "width": 153,
+        "height": 181
+      },
+      "paddedBoundingBox": {
+        "x": 602,
+        "y": 1052,
+        "width": 157,
+        "height": 185
+      },
+      "pixelCount": 21961
+    },
+    {
+      "filename": "object_080.png",
+      "width": 146,
+      "height": 189,
+      "sourceBoundingBox": {
+        "x": 917,
+        "y": 1054,
+        "width": 142,
+        "height": 185
+      },
+      "paddedBoundingBox": {
+        "x": 915,
+        "y": 1052,
+        "width": 146,
+        "height": 189
+      },
+      "pixelCount": 20720
+    },
+    {
+      "filename": "object_081.png",
+      "width": 83,
+      "height": 185,
+      "sourceBoundingBox": {
+        "x": 1162,
+        "y": 1054,
+        "width": 79,
+        "height": 181
+      },
+      "paddedBoundingBox": {
+        "x": 1160,
+        "y": 1052,
+        "width": 83,
+        "height": 185
+      },
+      "pixelCount": 12412
+    },
+    {
+      "filename": "object_082.png",
+      "width": 66,
+      "height": 83,
+      "sourceBoundingBox": {
+        "x": 1081,
+        "y": 1055,
+        "width": 62,
+        "height": 79
+      },
+      "paddedBoundingBox": {
+        "x": 1079,
+        "y": 1053,
+        "width": 66,
+        "height": 83
+      },
+      "pixelCount": 4552
+    },
+    {
+      "filename": "object_083.png",
+      "width": 105,
+      "height": 90,
+      "sourceBoundingBox": {
+        "x": 786,
+        "y": 1056,
+        "width": 101,
+        "height": 86
+      },
+      "paddedBoundingBox": {
+        "x": 784,
+        "y": 1054,
+        "width": 105,
+        "height": 90
+      },
+      "pixelCount": 8486
+    },
+    {
+      "filename": "object_084.png",
+      "width": 68,
+      "height": 85,
+      "sourceBoundingBox": {
+        "x": 1081,
+        "y": 1154,
+        "width": 64,
+        "height": 81
+      },
+      "paddedBoundingBox": {
+        "x": 1079,
+        "y": 1152,
+        "width": 68,
+        "height": 85
+      },
+      "pixelCount": 4926
+    },
+    {
+      "filename": "object_085.png",
+      "width": 150,
+      "height": 83,
+      "sourceBoundingBox": {
+        "x": 432,
+        "y": 1156,
+        "width": 146,
+        "height": 79
+      },
+      "paddedBoundingBox": {
+        "x": 430,
+        "y": 1154,
+        "width": 150,
+        "height": 83
+      },
+      "pixelCount": 11295
+    },
+    {
+      "filename": "object_086.png",
+      "width": 107,
+      "height": 82,
+      "sourceBoundingBox": {
+        "x": 784,
+        "y": 1157,
+        "width": 103,
+        "height": 78
+      },
+      "paddedBoundingBox": {
+        "x": 782,
+        "y": 1155,
+        "width": 107,
+        "height": 82
+      },
+      "pixelCount": 7993
+    }
+  ]
+}
