@@ -17,6 +17,7 @@
 - Entering the pub switches to `public/locations/pub.json`.
 - The pub interior has placeholder bar, table, beer, shelf, stool, wall sign, light, and crate-like prop dressing for the punchline.
 - The pub scene now has a first tileset workflow through `public/maps/pub_mvp.json` and `public/assets/tilesets/pub_mvp_tileset.png`.
+- The pub MVP tileset asset is present in the GitHub repository at `public/assets/tilesets/pub_mvp_tileset.png`.
 - Generated pub rendering is now fallback only when the tilemap or tileset cannot be loaded.
 - Pub visual direction is now asset-led rather than rectangle-led.
 - The camera remains player-follow only and is constrained to the active map bounds.
@@ -132,4 +133,4 @@ GitHub Actions validation/build has been added separately through `.github/workf
 
 ## Next Recommended Task
 
-Make sure `public/assets/tilesets/pub_mvp_tileset.png` is present in the GitHub repository, then run CI and manually check the Pub Friend pub interior before expanding beach or gym content.
+Run GitHub Actions and manually check the Pub Friend pub interior before expanding beach or gym content.
