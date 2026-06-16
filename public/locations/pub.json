@@ -5,6 +5,12 @@
   "background": "#451a03",
   "musicPath": "",
   "ambiencePath": "",
+  "tilemap": {
+    "mapPath": "/maps/pub_mvp.json",
+    "tilesetPath": "/assets/tilesets/pub_mvp_tileset.png",
+    "tileWidth": 16,
+    "tileHeight": 16
+  },
   "playerSpawnPoint": "door",
   "playerSpawns": {
     "door": { "x": 5, "y": 7 }
