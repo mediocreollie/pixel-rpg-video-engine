@@ -59,6 +59,33 @@ const PROP_ASSET_PACKS = {
     'window_flowerbox.png',
     'arched_doorway.png',
     'brick_wall.png'
+  ],
+  beach: [
+    'sand_tile_plain.png',
+    'sand_tile_shells.png',
+    'shoreline_wave_tile.png',
+    'water_tile_light.png',
+    'water_tile_deep.png',
+    'rock_shore_edge.png',
+    'rock_shore_corner.png',
+    'beach_grass.png',
+    'dune_grass_green.png',
+    'driftwood.png',
+    'surfboard.png',
+    'beach_flag.png',
+    'beach_umbrella.png',
+    'deck_chair.png',
+    'beach_towel_blue.png',
+    'beach_sign_wave.png',
+    'cooler.png',
+    'bucket_spade.png',
+    'fence_section.png',
+    'boardwalk_stairs.png',
+    'beach_hut_front.png',
+    'blue_roof_tile.png',
+    'lifebuoy_wall.png',
+    'sandcastle.png',
+    'seagull.png'
   ]
 };
 
