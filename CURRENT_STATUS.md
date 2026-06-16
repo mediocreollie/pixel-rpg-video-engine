@@ -30,6 +30,7 @@
 - The latest composition pass strengthens route logic: the spawn, Jack path, pub direction cue, and pub doorway now sit on one readable route spine.
 - The latest pub composition pass groups props into believable zones: wall/bar service area, seating clusters, entrance lane, wall fixtures, and anchored rug area.
 - `WorldScene` now supports location-level prop asset packs through `propAssetPack`, so future connector locations can use named production assets without borrowing pub texture keys.
+- `WorldScene` now supports clamped location-level camera and display settings through `cameraZoom`, `playerScale`, and `propScaleMultiplier`.
 - The camera remains player-follow only and is constrained to the active map bounds.
 - `Escape` returns from gameplay to the scene selector.
 - `R` restarts the current gameplay scene while gameplay is active.
@@ -151,6 +152,29 @@ Visual effect:
 
 The scenes should feel more intentionally built and less like asset samples placed on a map. The player and Jack remain the movement focus, while the environment now guides the journey and supports the pub reveal.
 
+## Camera And Scale Visibility Pass
+
+The Pub Friend flow now has location-level camera and scale controls for readability.
+
+What changed:
+
+- `WorldScene.createCamera` now reads a clamped `cameraZoom` value instead of relying on one hard-coded zoom for every location.
+- `WorldScene` now supports `propScaleMultiplier` so a location can lightly reduce or increase visual prop size without editing every prop entry.
+- `WorldScene` now supports `playerScale` for the player and NPCs, clamped to keep characters readable.
+- Asset props and generated fallback props both respect the location prop multiplier.
+- The Town Edge Route uses `cameraZoom: 1.65`, `playerScale: 0.95`, and `propScaleMultiplier: 0.9`.
+- The Pub uses `cameraZoom: 1.85`, `playerScale: 0.95`, and `propScaleMultiplier: 0.92`.
+
+Clamp guidance:
+
+- Camera zoom is clamped from `1.35` to `2.8`.
+- Location prop scale is clamped from `0.75` to `1.15`.
+- Character scale is clamped from `0.85` to `1.15`.
+
+Visual effect:
+
+Town should now show more of the route spine, signs, lamps, building edge, and path context at once. The pub should now show more of the bar, seating groups, entrance lane, and rug area while keeping the cosy interior readable. This pass keeps the camera player-follow only and does not re-enable tilemap rendering.
+
 ## Multi-Scene Object Workflow
 
 The object atlas tooling now works across multiple scene packs instead of only the pub.
@@ -242,29 +266,31 @@ GitHub Actions validation/build has been added separately through `.github/workf
 13. Confirm the player appears.
 14. Confirm Jack appears near the player.
 15. Confirm the path visually leads from the spawn/Jack area toward the pub entrance.
-16. Walk around town and confirm the camera follows the player without showing outside the map.
-17. Stand near Jack and press `Space` or `Enter`.
-18. Confirm the DS-era dialogue box opens.
-19. Confirm the typewriter effect runs.
-20. Press `Space` mid-line and confirm the line completes instantly.
-21. Press `Space` again and confirm dialogue closes.
-22. Confirm Jack starts walking toward the pub door through the connector route.
-23. Follow Jack and confirm the player can move freely along the route.
-24. Walk into the highlighted pub door.
-25. Confirm the pub interior loads.
-26. Confirm the pub entrance area is readable and not blocked by furniture.
-27. Confirm the bar, shelves, taps, tables, stools, wall fixtures, and rug feel like organised zones.
-28. Confirm the pub uses the generated renderer by default and shows no random sliced tile fragments.
-29. Confirm the pub displays named production PNG props when those files are available.
-30. Confirm the beer punchline is visually obvious.
-31. Confirm no missing `townCenter` spawn warning appears in the pub.
-32. Press `Escape` and confirm the scene selector returns.
-33. Start Pub Friend again and confirm the scene still loads.
-34. Start Pub Friend, press `R`, and confirm the scene restarts.
-35. Press `H` and confirm the recording overlay hides/shows.
-36. Press `?` and confirm the controls screen opens.
-37. Toggle 9:16 canvas mode and repeat the key checks for readability.
+16. Confirm the wider town camera shows more of the route, edge props, and pub direction context without leaving the map bounds.
+17. Walk around town and confirm the camera follows the player without showing outside the map.
+18. Stand near Jack and press `Space` or `Enter`.
+19. Confirm the DS-era dialogue box opens.
+20. Confirm the typewriter effect runs.
+21. Press `Space` mid-line and confirm the line completes instantly.
+22. Press `Space` again and confirm dialogue closes.
+23. Confirm Jack starts walking toward the pub door through the connector route.
+24. Follow Jack and confirm the player can move freely along the route.
+25. Walk into the highlighted pub door.
+26. Confirm the pub interior loads.
+27. Confirm the pub entrance area is readable and not blocked by furniture.
+28. Confirm the wider pub camera shows the bar, seating, entrance lane, and rug area together.
+29. Confirm the bar, shelves, taps, tables, stools, wall fixtures, and rug feel like organised zones.
+30. Confirm the pub uses the generated renderer by default and shows no random sliced tile fragments.
+31. Confirm the pub displays named production PNG props when those files are available.
+32. Confirm the beer punchline is visually obvious.
+33. Confirm no missing `townCenter` spawn warning appears in the pub.
+34. Press `Escape` and confirm the scene selector returns.
+35. Start Pub Friend again and confirm the scene still loads.
+36. Start Pub Friend, press `R`, and confirm the scene restarts.
+37. Press `H` and confirm the recording overlay hides/shows.
+38. Press `?` and confirm the controls screen opens.
+39. Toggle 9:16 canvas mode and repeat the key checks for readability.
 
 ## Next Recommended Task
 
-Run the Pub Friend browser test to confirm the composition pass reads well in motion, then tune route prop scale and pub furniture spacing from a real screenshot before wiring other destination scenes.
+Run the Pub Friend browser test to confirm the composition and camera pass read well in motion, then tune route prop scale and pub furniture spacing from a real screenshot before wiring other destination scenes.
