@@ -6,6 +6,27 @@ const FALLBACK_COLOR = '#111827';
 const CAMERA_ZOOM = 2.35;
 const CAMERA_LERP = 0.12;
 const PUB_TILEMAP_DEBUG = true;
+const PUB_PROP_ASSETS = [
+  'floor_wood.png',
+  'wall_back_plain.png',
+  'wall_corner_inner.png',
+  'bar_counter_straight.png',
+  'bar_counter_corner.png',
+  'table_round.png',
+  'table_square_with_beer.png',
+  'stool.png',
+  'chair_side_left.png',
+  'bottle_shelf.png',
+  'barrel.png',
+  'keg_tap.png',
+  'fireplace.png',
+  'pub_sign.png',
+  'lamp_hanging.png',
+  'rug_rect_red.png',
+  'plant.png',
+  'door_double.png',
+  'window_square.png'
+];
 const FALLBACK_LOCATION = {
   id: 'fallback',
   mapName: 'Missing Location',
@@ -75,6 +96,8 @@ export class WorldScene extends Phaser.Scene {
     const locationId = this.currentLocationId || scene?.startingLocation;
     const location = this.cache.json.get(`location:${locationId}`);
     const tilemap = location?.tilemap;
+
+    this.preloadPubPropAssets(locationId);
 
     if (location?.useTilemap !== true || !tilemap?.mapPath || !tilemap?.tilesetPath) {
       return;
@@ -166,6 +189,23 @@ export class WorldScene extends Phaser.Scene {
     if (Phaser.Input.Keyboard.JustDown(this.keys.interact) || Phaser.Input.Keyboard.JustDown(this.keys.confirm)) {
       this.tryInteract();
     }
+  }
+
+  preloadPubPropAssets(locationId) {
+    if (locationId !== 'pub') {
+      return;
+    }
+
+    PUB_PROP_ASSETS.forEach((assetName) => {
+      const key = this.getPubPropAssetKey(assetName);
+      if (!this.textures.exists(key)) {
+        this.load.image(key, `/assets/props/pub/${assetName}`);
+      }
+    });
+  }
+
+  getPubPropAssetKey(assetName) {
+    return `pub-prop:${assetName.replace(/\.png$/i, '')}`;
   }
 
   buildLocation() {
@@ -501,27 +541,74 @@ export class WorldScene extends Phaser.Scene {
     const x = prop.x * TILE_SIZE + TILE_SIZE / 2;
     const y = prop.y * TILE_SIZE + TILE_SIZE / 2;
 
-    if (prop.kind === 'beer') {
-      this.createBeerProp(x, y, prop);
+    if (prop.asset) {
+      this.createAssetProp(x, y, prop);
       return;
     }
 
-    if (prop.kind === 'table') {
-      this.createTableProp(x, y, prop);
+    this.createFallbackProp(x, y, prop);
+  }
+
+  createAssetProp(x, y, prop) {
+    const key = this.getPubPropAssetKey(prop.asset);
+
+    if (!this.textures.exists(key)) {
+      this.createFallbackProp(x, y, prop);
       return;
     }
 
-    if (prop.kind === 'bar') {
-      this.createBarProp(x, y, prop);
+    const image = this.add.image(x, y, key)
+      .setOrigin(prop.originX ?? 0.5, prop.originY ?? 0.5)
+      .setDepth(prop.depth ?? 0);
+
+    if (typeof prop.width === 'number' && typeof prop.height === 'number') {
+      image.setDisplaySize(prop.width, prop.height);
+    } else if (typeof prop.scale === 'number') {
+      image.setScale(prop.scale);
+    }
+
+    if (prop.flipX) {
+      image.setFlipX(true);
+    }
+
+    if (prop.flipY) {
+      image.setFlipY(true);
+    }
+  }
+
+  createFallbackProp(x, y, prop) {
+    const fallbackProp = {
+      ...prop,
+      asset: null,
+      kind: prop.fallbackKind || prop.kind
+    };
+
+    if (fallbackProp.kind === 'beer') {
+      this.createBeerProp(x, y, fallbackProp);
       return;
     }
 
-    if (prop.kind === 'door') {
-      this.createDoorProp(x, y, prop);
+    if (fallbackProp.kind === 'table') {
+      this.createTableProp(x, y, fallbackProp);
       return;
     }
 
+    if (fallbackProp.kind === 'bar') {
+      this.createBarProp(x, y, fallbackProp);
+      return;
+    }
+
+    if (fallbackProp.kind === 'door') {
+      this.createDoorProp(x, y, fallbackProp);
+      return;
+    }
+
+    this.createGeneratedShapeProp(x, y, fallbackProp);
+  }
+
+  createGeneratedShapeProp(x, y, prop) {
     const sprite = this.add.rectangle(x, y, prop.width || 8, prop.height || 8, toColor(prop.color || '#ffffff'));
+    sprite.setDepth(prop.depth ?? 0);
     sprite.setStrokeStyle(1, toColor(prop.outline || '#111827'));
 
     if (prop.label) {
@@ -529,7 +616,7 @@ export class WorldScene extends Phaser.Scene {
         fontFamily: 'monospace',
         fontSize: '4px',
         color: prop.labelColor || '#111827'
-      }).setOrigin(0.5, 0);
+      }).setOrigin(0.5, 0).setDepth((prop.depth ?? 0) + 1);
     }
   }
 
@@ -543,6 +630,7 @@ export class WorldScene extends Phaser.Scene {
     mug.add(this.add.rectangle(0, -3, 5, 2, foamColor));
     mug.add(this.add.rectangle(3, 1, 2, 4, 0x000000, 0).setStrokeStyle(1, foamColor));
     mug.add(this.add.rectangle(-1, 1, 1, 4, 0xfde68a, 0.55));
+    mug.setDepth(prop.depth ?? 0);
   }
 
   createTableProp(x, y, prop) {
@@ -555,6 +643,7 @@ export class WorldScene extends Phaser.Scene {
     table.add(this.add.rectangle(0, 0, width, height, topColor).setStrokeStyle(1, outlineColor));
     table.add(this.add.rectangle(-width / 4, -height / 4, 3, 2, 0xf59e0b).setStrokeStyle(1, 0x78350f));
     table.add(this.add.rectangle(width / 4, height / 4, 3, 2, 0xf59e0b).setStrokeStyle(1, 0x78350f));
+    table.setDepth(prop.depth ?? 0);
   }
 
   createBarProp(x, y, prop) {
@@ -571,6 +660,7 @@ export class WorldScene extends Phaser.Scene {
         bar.add(this.add.rectangle(offset, 1, 3, 5, 0xf59e0b).setStrokeStyle(1, 0x78350f));
       }
     });
+    bar.setDepth(prop.depth ?? 0);
   }
 
   createDoorProp(x, y, prop) {
@@ -580,6 +670,7 @@ export class WorldScene extends Phaser.Scene {
 
     door.add(this.add.rectangle(0, 0, prop.width || 8, prop.height || 11, doorColor).setStrokeStyle(1, outlineColor));
     door.add(this.add.rectangle(2, 1, 1, 1, 0x713f12));
+    door.setDepth(prop.depth ?? 0);
   }
 
   createPlayer() {
