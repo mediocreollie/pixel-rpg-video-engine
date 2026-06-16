@@ -2,13 +2,34 @@ import fs from 'node:fs';
 import path from 'node:path';
 import zlib from 'node:zlib';
 
-const DEFAULT_SOURCE = 'references/source-sheets/pub_object_sheet.png';
-const DEFAULT_OUTPUT_DIR = 'public/assets/props/pub/raw';
+const SCENE_PACKS = {
+  pub: {
+    source: 'references/source-sheets/pub_object_sheet.png',
+    outputDir: 'public/assets/props/pub/raw',
+  },
+  'outside-route': {
+    source: 'references/source-sheets/outside_route_object_sheet.png',
+    outputDir: 'public/assets/props/outside-route/raw',
+  },
+  beach: {
+    source: 'references/source-sheets/beach_object_sheet.png',
+    outputDir: 'public/assets/props/beach/raw',
+  },
+  park: {
+    source: 'references/source-sheets/park_object_sheet.png',
+    outputDir: 'public/assets/props/park/raw',
+  },
+  cafe: {
+    source: 'references/source-sheets/cafe_object_sheet.png',
+    outputDir: 'public/assets/props/cafe/raw',
+  },
+};
 const CRC_TABLE = createCrcTable();
 
 const options = parseArgs(process.argv.slice(2));
-const sourcePath = path.normalize(options.source ?? DEFAULT_SOURCE);
-const outputDir = path.normalize(options.outputDir ?? DEFAULT_OUTPUT_DIR);
+const pack = getScenePack(options.pack);
+const sourcePath = path.normalize(options.source ?? pack.source);
+const outputDir = path.normalize(options.outputDir ?? pack.outputDir);
 const settings = {
   padding: options.padding ?? 2,
   minPixels: options.minPixels ?? 32,
@@ -60,9 +81,11 @@ function main() {
 
   const manifestPath = path.join(outputDir, 'manifest.json');
   const contactSheetPath = path.join(outputDir, 'contact_sheet.png');
+  const reviewPath = path.join(outputDir, 'review.html');
   const outputPaths = [
     manifestPath,
     contactSheetPath,
+    reviewPath,
     ...crops.map((crop) => path.join(outputDir, crop.filename)),
   ];
   const existingOutputs = outputPaths.filter((outputPath) => fs.existsSync(outputPath));
@@ -77,13 +100,14 @@ function main() {
 
   fs.writeFileSync(contactSheetPath, encodePng(createContactSheet(crops.map((crop) => crop.image))));
   fs.writeFileSync(manifestPath, `${JSON.stringify(createManifest(source, crops), null, 2)}\n`);
+  fs.writeFileSync(reviewPath, createReviewHtml(options.pack));
 
-  console.log(`Extracted ${crops.length} object(s) from ${sourcePath}`);
-  console.log(`Wrote raw crops, manifest, and contact sheet to ${outputDir}`);
+  console.log(`Extracted ${crops.length} ${options.pack} object(s) from ${sourcePath}`);
+  console.log(`Wrote raw crops, manifest, contact sheet, and review page to ${outputDir}`);
 }
 
 function parseArgs(args) {
-  const parsed = {};
+  const parsed = { pack: 'pub' };
   const positional = [];
 
   for (const arg of args) {
@@ -93,15 +117,31 @@ function parseArgs(args) {
       parsed.minPixels = parseNumberOption(arg, '--min-pixels=');
     } else if (arg.startsWith('--alpha-threshold=')) {
       parsed.alphaThreshold = parseNumberOption(arg, '--alpha-threshold=');
+    } else if (arg.startsWith('--pack=')) {
+      parsed.pack = arg.slice('--pack='.length);
     } else {
       positional.push(arg);
     }
   }
 
-  if (positional[0]) parsed.source = positional[0];
-  if (positional[1]) parsed.outputDir = positional[1];
+  if (positional[0] && SCENE_PACKS[positional[0]]) {
+    parsed.pack = positional[0];
+    if (positional[1]) parsed.source = positional[1];
+    if (positional[2]) parsed.outputDir = positional[2];
+  } else {
+    if (positional[0]) parsed.source = positional[0];
+    if (positional[1]) parsed.outputDir = positional[1];
+  }
 
   return parsed;
+}
+
+function getScenePack(packName) {
+  const pack = SCENE_PACKS[packName];
+  if (!pack) {
+    throw new Error(`unknown scene pack: ${packName}. Expected one of: ${Object.keys(SCENE_PACKS).join(', ')}`);
+  }
+  return pack;
 }
 
 function parseNumberOption(arg, prefix) {
@@ -244,6 +284,7 @@ function blit(source, target, targetX, targetY) {
 
 function createManifest(source, crops) {
   return {
+    scenePack: options.pack,
     source: toPosixPath(sourcePath),
     outputDir: toPosixPath(outputDir),
     generatedAt: new Date().toISOString(),
@@ -251,6 +292,59 @@ function createManifest(source, crops) {
     sourceImage: { width: source.width, height: source.height },
     objects: crops.map((crop) => crop.manifest),
   };
+}
+
+function createReviewHtml(packName) {
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${escapeHtml(packName)} Object Review</title>
+  <style>
+    body { margin: 0; background: #111827; color: #f8fafc; font-family: system-ui, sans-serif; }
+    header { position: sticky; top: 0; background: #020617; padding: 16px 20px; border-bottom: 1px solid #334155; }
+    h1 { margin: 0; font-size: 18px; }
+    main { padding: 20px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 16px; }
+    .card { background: #1f2937; border: 1px solid #334155; border-radius: 6px; padding: 10px; }
+    .preview { display: grid; place-items: center; height: 136px; background: #0f172a; border-radius: 4px; image-rendering: pixelated; }
+    img { max-width: 100%; max-height: 128px; image-rendering: pixelated; }
+    .name { margin-top: 8px; font: 12px ui-monospace, SFMono-Regular, Consolas, monospace; color: #facc15; }
+    .meta { margin-top: 4px; font-size: 12px; color: #cbd5e1; }
+  </style>
+</head>
+<body>
+  <header><h1>${escapeHtml(packName)} raw object review</h1></header>
+  <main><div id="grid" class="grid"></div></main>
+  <script>
+    fetch('manifest.json')
+      .then((response) => response.json())
+      .then((manifest) => {
+        const grid = document.getElementById('grid');
+        grid.innerHTML = manifest.objects.map((item) => `
+          <article class="card">
+            <div class="preview"><img src="${'${item.filename}'}" alt="${'${item.filename}'}"></div>
+            <div class="name">${'${item.filename}'}</div>
+            <div class="meta">${'${item.width}'} x ${'${item.height}'} px</div>
+          </article>
+        `).join('');
+      })
+      .catch((error) => {
+        document.getElementById('grid').textContent = `Unable to load manifest.json: ${'${error.message}'}`;
+      });
+  </script>
+</body>
+</html>
+`;
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;');
 }
 
 function decodePng(buffer) {
