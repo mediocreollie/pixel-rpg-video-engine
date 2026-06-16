@@ -28,7 +28,7 @@ Raw extracted props for the pub live in:
 public/assets/props/pub/raw/
 ```
 
-The raw folder is a review area. It is not wired into game rendering yet.
+The raw folder is a review area. Raw extracted files are not used directly in game code.
 
 Running the extractor writes:
 
@@ -42,7 +42,7 @@ manifest.json
 
 The script refuses to overwrite existing output files. If you need a new pass, move or clear the reviewed raw output first, or choose a different output folder.
 
-## Command
+## Extraction Command
 
 Default pub extraction:
 
@@ -76,15 +76,66 @@ npm run extract-objects -- references/source-sheets/pub_object_sheet.png public/
 
 ## Review Step
 
-After extraction:
+After extraction, open:
 
-1. Open `contact_sheet.png` to inspect the full batch quickly.
-2. Check `manifest.json` for crop sizes and source bounding boxes.
-3. Review individual `object_###.png` files.
-4. Rename, curate, or rebuild approved assets in a future non-raw folder.
+```text
+public/assets/props/pub/raw/review.html
+```
+
+The review page reads `manifest.json`, displays every extracted `object_###.png`, shows filenames, and includes dimensions when the manifest provides them.
+
+Use this page to compare candidates visually before choosing production props.
+
+## Selection Map
+
+Selected pub props are listed in:
+
+```text
+public/assets/props/pub/selected-props.json
+```
+
+The file maps clean production names to raw candidates:
+
+```json
+{
+  "table_round": "raw/object_012.png",
+  "stool": "raw/object_018.png",
+  "beer_mug": "raw/object_025.png",
+  "bar_counter": "raw/object_031.png",
+  "bottle_shelf": "raw/object_044.png"
+}
+```
+
+Edit this file manually after reviewing the raw crops. The left side becomes the production filename, and the right side points to the selected raw crop.
+
+## Promotion Command
+
+Promote selected props with:
+
+```bash
+npm run promote-props
+```
+
+This copies selected raw files into:
+
+```text
+public/assets/props/pub/
+```
+
+For example:
+
+```text
+raw/object_012.png -> table_round.png
+```
+
+The promotion script never deletes raw files. It refuses to overwrite existing production files unless run with:
+
+```bash
+npm run promote-props -- --overwrite
+```
 
 ## Current Boundary
 
-This workflow only prepares raw object crops. It does not modify Phaser rendering, scene loading, map data, gameplay, dialogue, or controls.
+This workflow only prepares, reviews, and promotes object PNG assets. It does not modify Phaser rendering, scene loading, map data, gameplay, dialogue, or controls.
 
-A later asset pass can promote approved props into a proper object atlas or placement workflow after the raw crops have been reviewed.
+A later asset pass can wire approved production props into an object atlas or placement workflow after the promoted files have been reviewed.
