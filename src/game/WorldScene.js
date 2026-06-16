@@ -6,27 +6,56 @@ const FALLBACK_COLOR = '#111827';
 const CAMERA_ZOOM = 2.35;
 const CAMERA_LERP = 0.12;
 const PUB_TILEMAP_DEBUG = true;
-const PUB_PROP_ASSETS = [
-  'floor_wood.png',
-  'wall_back_plain.png',
-  'wall_corner_inner.png',
-  'bar_counter_straight.png',
-  'bar_counter_corner.png',
-  'table_round.png',
-  'table_square_with_beer.png',
-  'stool.png',
-  'chair_side_left.png',
-  'bottle_shelf.png',
-  'barrel.png',
-  'keg_tap.png',
-  'fireplace.png',
-  'pub_sign.png',
-  'lamp_hanging.png',
-  'rug_rect_red.png',
-  'plant.png',
-  'door_double.png',
-  'window_square.png'
-];
+
+const PROP_ASSET_PACKS = {
+  pub: [
+    'floor_wood.png',
+    'wall_back_plain.png',
+    'wall_corner_inner.png',
+    'bar_counter_straight.png',
+    'bar_counter_corner.png',
+    'table_round.png',
+    'table_square_with_beer.png',
+    'stool.png',
+    'chair_side_left.png',
+    'bottle_shelf.png',
+    'barrel.png',
+    'keg_tap.png',
+    'fireplace.png',
+    'pub_sign.png',
+    'lamp_hanging.png',
+    'rug_rect_red.png',
+    'plant.png',
+    'door_double.png',
+    'window_square.png'
+  ],
+  'outside-route': [
+    'grass_light.png',
+    'grass_dark.png',
+    'sand_path_tile.png',
+    'sand_path_corner_large.png',
+    'dirt_path_vertical.png',
+    'pavement_tiles.png',
+    'route_sign_201.png',
+    'lamp_post.png',
+    'wooden_signpost.png',
+    'notice_board.png',
+    'wooden_fence_section.png',
+    'bush_large.png',
+    'pine_tree.png',
+    'small_tree.png',
+    'hedge_long.png',
+    'flower_bush_white.png',
+    'round_bush.png',
+    'large_rock.png',
+    'bench.png',
+    'red_mailbox.png',
+    'window_flowerbox.png',
+    'arched_doorway.png',
+    'brick_wall.png'
+  ]
+};
+
 const FALLBACK_LOCATION = {
   id: 'fallback',
   mapName: 'Missing Location',
@@ -97,7 +126,7 @@ export class WorldScene extends Phaser.Scene {
     const location = this.cache.json.get(`location:${locationId}`);
     const tilemap = location?.tilemap;
 
-    this.preloadPubPropAssets(locationId);
+    this.preloadLocationPropAssets(locationId, location);
 
     if (location?.useTilemap !== true || !tilemap?.mapPath || !tilemap?.tilesetPath) {
       return;
@@ -191,21 +220,28 @@ export class WorldScene extends Phaser.Scene {
     }
   }
 
-  preloadPubPropAssets(locationId) {
-    if (locationId !== 'pub') {
+  preloadLocationPropAssets(locationId, location) {
+    const pack = this.getLocationPropAssetPack(locationId, location);
+    const assets = PROP_ASSET_PACKS[pack];
+
+    if (!assets) {
       return;
     }
 
-    PUB_PROP_ASSETS.forEach((assetName) => {
-      const key = this.getPubPropAssetKey(assetName);
+    assets.forEach((assetName) => {
+      const key = this.getPropAssetKey(pack, assetName);
       if (!this.textures.exists(key)) {
-        this.load.image(key, `/assets/props/pub/${assetName}`);
+        this.load.image(key, `/assets/props/${pack}/${assetName}`);
       }
     });
   }
 
-  getPubPropAssetKey(assetName) {
-    return `pub-prop:${assetName.replace(/\.png$/i, '')}`;
+  getLocationPropAssetPack(locationId, location = this.locationData) {
+    return location?.propAssetPack || locationId;
+  }
+
+  getPropAssetKey(pack, assetName) {
+    return `${pack}-prop:${assetName.replace(/\.png$/i, '')}`;
   }
 
   buildLocation() {
@@ -329,8 +365,8 @@ export class WorldScene extends Phaser.Scene {
         width: this.mapPixelWidth,
         height: this.mapPixelHeight
       },
-      tilesetFrameTotal: tilesetDebug.frameTotal,
-      frameRangeLooksValid: tilesetDebug.frameTotal === null || tileDebug.maxFrameIdUsed < tilesetDebug.frameTotal
+      tilesetFrameTotal: tilesetDebug?.frameTotal ?? null,
+      frameRangeLooksValid: !tilesetDebug || tileDebug.maxFrameIdUsed < tilesetDebug.frameTotal
     });
 
     this.drawPubTilemapDebugOverlay(tilemap, { width, height, tileSize });
@@ -550,7 +586,8 @@ export class WorldScene extends Phaser.Scene {
   }
 
   createAssetProp(x, y, prop) {
-    const key = this.getPubPropAssetKey(prop.asset);
+    const pack = prop.assetPack || this.getLocationPropAssetPack(this.currentLocationId);
+    const key = this.getPropAssetKey(pack, prop.asset);
 
     if (!this.textures.exists(key)) {
       this.createFallbackProp(x, y, prop);
@@ -560,6 +597,10 @@ export class WorldScene extends Phaser.Scene {
     const image = this.add.image(x, y, key)
       .setOrigin(prop.originX ?? 0.5, prop.originY ?? 0.5)
       .setDepth(prop.depth ?? 0);
+
+    if (typeof prop.alpha === 'number') {
+      image.setAlpha(prop.alpha);
+    }
 
     if (typeof prop.width === 'number' && typeof prop.height === 'number') {
       image.setDisplaySize(prop.width, prop.height);
@@ -610,6 +651,10 @@ export class WorldScene extends Phaser.Scene {
     const sprite = this.add.rectangle(x, y, prop.width || 8, prop.height || 8, toColor(prop.color || '#ffffff'));
     sprite.setDepth(prop.depth ?? 0);
     sprite.setStrokeStyle(1, toColor(prop.outline || '#111827'));
+
+    if (typeof prop.alpha === 'number') {
+      sprite.setAlpha(prop.alpha);
+    }
 
     if (prop.label) {
       this.add.text(x, y + (prop.height || 8) / 2 + 2, prop.label, {
