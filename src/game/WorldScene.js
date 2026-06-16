@@ -3,7 +3,13 @@ import { DialogueBox } from './ui/DialogueBox.js';
 
 const TILE_SIZE = 16;
 const FALLBACK_COLOR = '#111827';
-const CAMERA_ZOOM = 2.35;
+const DEFAULT_CAMERA_ZOOM = 2.35;
+const MIN_CAMERA_ZOOM = 1.35;
+const MAX_CAMERA_ZOOM = 2.8;
+const MIN_PROP_SCALE_MULTIPLIER = 0.75;
+const MAX_PROP_SCALE_MULTIPLIER = 1.15;
+const MIN_CHARACTER_SCALE = 0.85;
+const MAX_CHARACTER_SCALE = 1.15;
 const CAMERA_LERP = 0.12;
 const PUB_TILEMAP_DEBUG = true;
 
@@ -106,6 +112,14 @@ function toColor(value) {
 
 function asArray(value) {
   return Array.isArray(value) ? value : [];
+}
+
+function clampSetting(value, min, max, fallback) {
+  if (!Number.isFinite(value)) {
+    return fallback;
+  }
+
+  return Phaser.Math.Clamp(value, min, max);
 }
 
 export class WorldScene extends Phaser.Scene {
@@ -588,6 +602,7 @@ export class WorldScene extends Phaser.Scene {
   createAssetProp(x, y, prop) {
     const pack = prop.assetPack || this.getLocationPropAssetPack(this.currentLocationId);
     const key = this.getPropAssetKey(pack, prop.asset);
+    const propScale = this.getPropRenderScale(prop);
 
     if (!this.textures.exists(key)) {
       this.createFallbackProp(x, y, prop);
@@ -603,9 +618,11 @@ export class WorldScene extends Phaser.Scene {
     }
 
     if (typeof prop.width === 'number' && typeof prop.height === 'number') {
-      image.setDisplaySize(prop.width, prop.height);
+      image.setDisplaySize(prop.width * propScale, prop.height * propScale);
     } else if (typeof prop.scale === 'number') {
-      image.setScale(prop.scale);
+      image.setScale(prop.scale * propScale);
+    } else if (propScale !== 1) {
+      image.setScale(propScale);
     }
 
     if (prop.flipX) {
@@ -648,7 +665,10 @@ export class WorldScene extends Phaser.Scene {
   }
 
   createGeneratedShapeProp(x, y, prop) {
-    const sprite = this.add.rectangle(x, y, prop.width || 8, prop.height || 8, toColor(prop.color || '#ffffff'));
+    const propScale = this.getPropRenderScale(prop);
+    const width = (prop.width || 8) * propScale;
+    const height = (prop.height || 8) * propScale;
+    const sprite = this.add.rectangle(x, y, width, height, toColor(prop.color || '#ffffff'));
     sprite.setDepth(prop.depth ?? 0);
     sprite.setStrokeStyle(1, toColor(prop.outline || '#111827'));
 
@@ -657,7 +677,7 @@ export class WorldScene extends Phaser.Scene {
     }
 
     if (prop.label) {
-      this.add.text(x, y + (prop.height || 8) / 2 + 2, prop.label, {
+      this.add.text(x, y + height / 2 + 2, prop.label, {
         fontFamily: 'monospace',
         fontSize: '4px',
         color: prop.labelColor || '#111827'
@@ -676,6 +696,7 @@ export class WorldScene extends Phaser.Scene {
     mug.add(this.add.rectangle(3, 1, 2, 4, 0x000000, 0).setStrokeStyle(1, foamColor));
     mug.add(this.add.rectangle(-1, 1, 1, 4, 0xfde68a, 0.55));
     mug.setDepth(prop.depth ?? 0);
+    mug.setScale(this.getPropRenderScale(prop));
   }
 
   createTableProp(x, y, prop) {
@@ -689,6 +710,7 @@ export class WorldScene extends Phaser.Scene {
     table.add(this.add.rectangle(-width / 4, -height / 4, 3, 2, 0xf59e0b).setStrokeStyle(1, 0x78350f));
     table.add(this.add.rectangle(width / 4, height / 4, 3, 2, 0xf59e0b).setStrokeStyle(1, 0x78350f));
     table.setDepth(prop.depth ?? 0);
+    table.setScale(this.getPropRenderScale(prop));
   }
 
   createBarProp(x, y, prop) {
@@ -706,6 +728,7 @@ export class WorldScene extends Phaser.Scene {
       }
     });
     bar.setDepth(prop.depth ?? 0);
+    bar.setScale(this.getPropRenderScale(prop));
   }
 
   createDoorProp(x, y, prop) {
@@ -716,14 +739,17 @@ export class WorldScene extends Phaser.Scene {
     door.add(this.add.rectangle(0, 0, prop.width || 8, prop.height || 11, doorColor).setStrokeStyle(1, outlineColor));
     door.add(this.add.rectangle(2, 1, 1, 1, 0x713f12));
     door.setDepth(prop.depth ?? 0);
+    door.setScale(this.getPropRenderScale(prop));
   }
 
   createPlayer() {
     const spawn = this.getSpawnPoint(this.spawnPoint || this.locationData.playerSpawnPoint || 'default');
+    const characterScale = this.getCharacterScale();
     this.player = this.add.container(spawn.x * TILE_SIZE + 8, spawn.y * TILE_SIZE + 8);
     this.physics.add.existing(this.player);
-    this.player.body.setSize(7, 7);
-    this.player.body.setOffset(-3.5, -1);
+    this.player.setScale(characterScale);
+    this.player.body.setSize(7 * characterScale, 7 * characterScale);
+    this.player.body.setOffset(-3.5 * characterScale, -1 * characterScale);
     this.player.setData('speed', this.sceneData.playerSpeed || 72);
     this.drawPixelPerson(this.player, '#3b82f6', '#f8fafc');
 
@@ -743,6 +769,7 @@ export class WorldScene extends Phaser.Scene {
 
   createNpcs() {
     this.npcs = this.physics.add.group();
+    const characterScale = this.getCharacterScale();
 
     this.characterData.forEach((character, actorId) => {
       const spawn = this.locationData.npcSpawnPoints?.[character.spawnPoint];
@@ -759,8 +786,9 @@ export class WorldScene extends Phaser.Scene {
       this.physics.add.existing(npc);
       npc.actorId = actorId;
       npc.name = character.name;
-      npc.body.setSize(7, 7);
-      npc.body.setOffset(-3.5, -1);
+      npc.setScale(characterScale);
+      npc.body.setSize(7 * characterScale, 7 * characterScale);
+      npc.body.setOffset(-3.5 * characterScale, -1 * characterScale);
       npc.setData('speed', character.movementSpeed || 46);
       this.drawPixelPerson(npc, character.sprite?.shirtColor || '#ef4444', character.sprite?.faceColor || '#fde68a');
 
@@ -845,8 +873,26 @@ export class WorldScene extends Phaser.Scene {
     const mapHeight = this.mapPixelHeight || this.locationData.map.tiles.length * TILE_SIZE;
 
     this.cameras.main.setBounds(0, 0, mapWidth, mapHeight);
-    this.cameras.main.setZoom(CAMERA_ZOOM);
+    this.cameras.main.setZoom(this.getCameraZoom());
     this.cameras.main.startFollow(this.player, true, CAMERA_LERP, CAMERA_LERP);
+  }
+
+  getCameraZoom() {
+    const requestedZoom = this.locationData.cameraZoom ?? this.sceneData.camera?.zoom;
+    return clampSetting(requestedZoom, MIN_CAMERA_ZOOM, MAX_CAMERA_ZOOM, DEFAULT_CAMERA_ZOOM);
+  }
+
+  getPropScaleMultiplier() {
+    return clampSetting(this.locationData.propScaleMultiplier, MIN_PROP_SCALE_MULTIPLIER, MAX_PROP_SCALE_MULTIPLIER, 1);
+  }
+
+  getPropRenderScale(prop = {}) {
+    const propScale = clampSetting(prop.scaleMultiplier, MIN_PROP_SCALE_MULTIPLIER, MAX_PROP_SCALE_MULTIPLIER, 1);
+    return this.getPropScaleMultiplier() * propScale;
+  }
+
+  getCharacterScale() {
+    return clampSetting(this.locationData.playerScale, MIN_CHARACTER_SCALE, MAX_CHARACTER_SCALE, 1);
   }
 
   movePlayer() {
@@ -978,7 +1024,7 @@ export class WorldScene extends Phaser.Scene {
           text: 'Missing scene data.'
         },
         camera: {
-          zoom: 2.35
+          zoom: DEFAULT_CAMERA_ZOOM
         }
       };
     }
