@@ -1,259 +1,114 @@
 # Current Status
 
-## What Currently Works By Static Review
+## Current Working State
 
-- The app boots through `BootScene`, loads `public/scenes/manifest.json`, then opens the DS-era `MenuScene`.
-- `Pub Friend` is listed in the manifest and is the current priority MVP test scene.
-- `Beach Day` is listed in the manifest and uses `public/scenes/beach.json` with `public/locations/beach.json` as its destination.
-- The menu can display scene title, description, starting location, and placeholder/custom asset status.
-- Selecting `Pub Friend` starts `WorldScene` with the pub scene ID.
-- The title card is loaded from `public/scenes/pub.json` and appears at the start of the town scene.
-- The town location loads from `public/locations/town.json`.
-- The player spawns at the town default spawn.
-- Jack spawns at the `townCenter` NPC spawn point.
-- Dialogue comes from the pub scene `dialogueSequence`.
-- Jack's dialogue colour and generated portrait data come from `public/characters/friend-jack.json`.
-- Jack's scripted path leads along the road toward the pub door.
-- The pub door exit points to the `pub` location.
-- Entering the pub switches to `public/locations/pub.json`.
-- The pub interior currently uses the stable generated pub renderer.
-- The pub scene has a first future tileset workflow through `public/maps/pub_mvp.json` and `public/assets/tilesets/pub_mvp_tileset.png`.
-- The pub MVP tileset asset is present in the GitHub repository at `public/assets/tilesets/pub_mvp_tileset.png`.
-- `public/locations/pub.json` now sets `useTilemap: false`, so generated pub rendering is the active default.
-- Pub tilemap rendering remains in code as future opt-in support and only runs when a location explicitly sets `useTilemap: true`.
-- Pub visual direction remains asset-led, but the current PNG is treated as a reference/asset sheet rather than a grid tileset.
-- The pub now preloads and places a first pass of promoted named object-atlas PNGs from `public/assets/props/pub/`.
-- Missing named pub PNGs fall back to generated shape props instead of crashing the scene.
-- The object extraction and promotion scripts now support separate scene packs for `pub`, `outside-route`, `beach`, `park`, and `cafe`.
-- Each supported scene pack has an independent `public/assets/props/<pack>/selected-props.json` promotion map.
-- The town starting area now acts as a first outside-route / town-edge connector scene using promoted named PNGs from `public/assets/props/outside-route/`.
-- The outside-route connector keeps the Pub Friend pub-door coordinates and Jack path intact while replacing obvious route placeholders with asset-led foliage, paths, signs, bench, mailbox, fence, and building edge pieces.
-- The latest composition pass strengthens route logic: the spawn, Jack path, pub direction cue, and pub doorway now sit on one readable route spine.
-- The latest pub composition pass groups props into believable zones: wall/bar service area, seating clusters, entrance lane, wall fixtures, and anchored rug area.
-- `WorldScene` now supports location-level prop asset packs through `propAssetPack`, so future connector locations can use named production assets without borrowing pub texture keys.
-- `WorldScene` now preloads the first beach production prop pack for `public/assets/props/beach/`.
-- `WorldScene` now supports clamped location-level camera and display settings through `cameraZoom`, `playerScale`, and `propScaleMultiplier`.
-- The beach destination now uses promoted named PNG props for sand, shoreline, water, hut/signage, boardwalk/entry details, and beach-day clusters.
-- The camera remains player-follow only and is constrained to the active map bounds.
-- `Escape` returns from gameplay to the scene selector.
-- `R` restarts the current gameplay scene while gameplay is active.
+- The project is a Phaser 3 / Vite pixel RPG video engine for short, screen-recordable social media scenes.
+- The app boots through `BootScene`, loads `public/scenes/manifest.json`, and opens the DS-era `MenuScene`.
+- `Pub Friend` remains the current priority MVP flow.
+- `Beach Day` is listed in the scene manifest and has a first asset-led beach destination.
+- Scene content is still JSON-driven through `public/scenes/`, `public/locations/`, `public/characters/`, and `public/schemas/`.
+- `Escape` returns gameplay to the scene selector.
+- `R` restarts the current gameplay scene.
 - `H` hides or shows the recording overlay and persists that setting.
 - `?` opens the controls screen.
 
-## Pub Visual Pass Before/After
+## Pub Friend Flow
 
-Before:
+- `Pub Friend` starts in `public/locations/town.json`.
+- The town location is now a town-edge / outside-route connector using `propAssetPack: "outside-route"`.
+- Jack spawns at the `townCenter` NPC spawn point.
+- Jack's scripted path still leads along the route toward the pub door.
+- The `pubDoor` exit still points to `public/locations/pub.json` and spawns the player at the pub door.
+- The pub uses `useTilemap: false`, so the broken mixed-size tileset slicing path remains disabled.
+- The pub uses promoted named PNG props from `public/assets/props/pub/` with generated shape fallbacks when a named image is missing.
+- The pub destination skips actors without a valid destination spawn, so Jack no longer causes a missing `townCenter` warning inside the pub.
 
-- The Pub Friend loop was readable mostly through text labels like `BEER`, `TABLE`, and `DOOR`.
-- The pub punchline worked conceptually, but it looked like a debug layout rather than a DS-era RPG scene.
+## Asset-Led Scene State
 
-After:
+- Pub props are promoted production assets in `public/assets/props/pub/` and are not loaded from `raw/object_###.png` paths.
+- Outside-route props are promoted production assets in `public/assets/props/outside-route/`.
+- Beach props are promoted production assets in `public/assets/props/beach/`.
+- `WorldScene` supports location prop packs through `propAssetPack`.
+- `WorldScene` preloads the first production prop packs for `pub`, `outside-route`, and `beach`.
+- Missing named PNG props fall back to generated shape props instead of crashing the scene.
+- The object extraction and promotion scripts support separate scene packs for `pub`, `outside-route`, `beach`, `park`, and `cafe`.
 
-- Beer props render as simple generated pint-glass placeholders.
-- Tables render as table silhouettes with beer props on top.
-- The bar renders as a warm counter with beer shapes.
-- The pub door renders as a door shape instead of a text-labelled rectangle.
+## Tilemap Status
 
-Visual problem solved:
+- `public/maps/pub_mvp.json` and `public/assets/tilesets/pub_mvp_tileset.png` remain in the repository as future tilemap workflow references.
+- `pub_mvp_tileset.png` is not a strict 16x16 grid tileset. It is a mixed-size visual reference / asset sheet.
+- Pub tilemap rendering remains future opt-in support and only runs when a location explicitly sets `useTilemap: true`.
+- Generated map rendering plus named prop images is the current stable path.
 
-The main Pub Friend punchline now reads more visually and less textually. This matters because short-form video viewers should understand the pub reveal quickly, especially in 9:16 recording mode.
+## RPG Layout Grammar Pass
 
-## Pub Interior Density Pass
+The current Pub Friend route and pub interior have been retuned around RPG map readability rather than large placed asset images.
 
-Completed visual improvement #1 from `NEXT_VISUAL_PASS.md`.
+Layout rules now applied:
 
-What changed:
+- The player is the scale anchor.
+- The camera should show a playable area, not a close-up of props.
+- Ground, path, and floor dressing should read as repeated tile-like pieces.
+- Props should sit on logical grid positions and support route, visual, or story logic.
+- Large assets should be clamped to sensible tile footprints.
+- Boundaries should shape where the player understands they can walk.
+- Signs, lamps, doors, paths, and landmarks should guide the viewer toward the destination.
+- Trees, hedges, fences, walls, and building pieces should frame edges instead of floating in the route centre.
+- Interior objects should form zones: entrance lane, wall fixtures, bar service, seating clusters, and punchline area.
 
-- Added visible shelf bands behind the bar.
-- Added small bottle shapes on the shelves.
-- Added warm wall sign/light blocks on both sides of the pub.
-- Added rows of tap-like bar details.
-- Added stools around both tables.
-- Added crate-like stacked props near the right side of the pub.
-- Added a little more beer density near the reveal area.
+Scale reference now used:
 
-Visual effect:
+- Player and NPCs should feel about one tile wide and roughly 1.5 to 2 tiles tall.
+- Small props should be roughly 0.5 to 1 player height.
+- Tables should feel like 2x2 or 3x2 tile objects, not half-screen set dressing.
+- Signs, lamps, chairs, stools, and mugs should not dominate the camera.
+- Bar counters and building pieces can be larger, but they should form environmental zones rather than fill the viewport.
+- Trees and building pieces can command space only when they sit at boundaries or scene edges.
 
-The pub interior should now feel busier, warmer, and more lived in while still using placeholder-friendly JSON props. The scene is closer to the art direction because the environment carries more of the pub identity before dialogue explains it.
-
-## Pub Tileset Workflow Pass
-
-The Pub Friend interior has a simple tilemap-compatible workflow prepared, but tilemap rendering is disabled by default.
-
-What changed:
-
-- Added `TILED_WORKFLOW.md` to document the asset-led scene workflow.
-- Added `public/maps/pub_mvp.json` as the first pub test map.
-- Pointed `public/locations/pub.json` at `public/maps/pub_mvp.json` and `public/assets/tilesets/pub_mvp_tileset.png`.
-- Added `useTilemap: false` to `public/locations/pub.json` so the generated pub renderer stays active.
-- Updated `WorldScene` so locations with `useTilemap: true`, a tilemap, and a tileset can render from tile frames.
-- Kept the existing generated pub map and props as the stable default and fallback.
-
-Visual effect:
-
-The pub is stable again and no longer displays random sliced fragments from `pub_mvp_tileset.png`. The tileset path remains documented for future work, but the current PNG is treated as a visual benchmark/reference sheet rather than a render-ready 16x16 tileset.
-
-## Pub Object Asset Pass
-
-The Pub Friend interior now uses promoted production PNGs from the object-atlas workflow while staying on the generated map renderer.
+## Town Edge Route Pass
 
 What changed:
 
-- Added a pub-only preload list for the first named production assets in `public/assets/props/pub/`.
-- Added safe optional image prop placement in `WorldScene`.
-- Updated `public/locations/pub.json` to place named PNG props for wall depth, floor dressing, bar pieces, tables, stools, shelves, barrels, fireplace, signage, lamps, plants, windows, rugs, and the door.
-- Kept generated shape fallbacks on the same prop entries so missing PNGs do not crash the pub scene.
-- Kept `useTilemap: false`; the broken mixed-size tileset slicing path is still not active.
+- `cameraZoom` was reduced to `1.45` so more of the route is visible at once.
+- `playerScale` was reduced to `0.9` so the player and Jack read closer to RPG map scale.
+- `propScaleMultiplier` was reduced to `0.78` so signs, lamps, trees, fences, and building accents no longer dominate the frame.
+- The visual route spine now reads as spawn -> Jack -> repeated path tiles -> pub direction cue -> pub entrance.
+- Large path pieces were replaced with smaller repeated path accents.
+- Pub entrance building pieces were reduced so they imply a structure without swallowing the route.
+- Route sign, lamp, mailbox, signpost, notice board, and bench were reduced to map-object scale.
+- Fences, hedges, bushes, trees, rocks, and flowers now act more clearly as route edges and boundary support.
 
-Visual effect:
+Expected visual effect:
 
-The pub should now read less like rectangle placeholders and more like a DS-era RPG interior built from reusable object sprites, while preserving the Pub Friend flow, dialogue, player movement, camera follow, and punchline reveal.
+The town connector should read more like a Pokemon-style route: a small player on a readable path with destination cues and boundary framing, rather than a close-up collage of oversized props.
 
-## Outside-Route Connector Pass
-
-The first asset-led town-edge connector scene is now wired into the existing `town` starting location.
+## Pub Interior Pass
 
 What changed:
 
-- Added generic location prop-pack loading in `WorldScene`.
-- `public/locations/town.json` now sets `propAssetPack: "outside-route"`.
-- The town route places promoted outside-route PNGs for grass variation, sand path pieces, pavement, a route sign, lamp post, signpost, notice board, fences, hedges, bushes, trees, rocks, bench, mailbox, windows, doorway, and brick wall pieces.
-- The current Pub Friend flow still starts in town, keeps Jack at `townCenter`, keeps the scripted walk toward `x:14, y:4`, and keeps the `pubDoor` exit pointing to the pub.
-- The connector is intentionally first-pass and readable rather than final-polished; scale and camera tuning are left for a later visual pass.
+- `cameraZoom` was reduced to `1.55` so the bar, seating area, entrance lane, and wall fixtures are visible together more often.
+- `playerScale` was reduced to `0.9`.
+- `propScaleMultiplier` was reduced to `0.78`.
+- The single large floor prop was replaced by repeated smaller floor pieces so the room reads more like a tiled RPG interior.
+- Wall, sign, lamp, window, and fireplace assets were reduced to wall-feature scale.
+- Bottle shelf, bar counter, bar corner, and keg/tap assets were reduced into a clear back-wall service zone.
+- Tables now read closer to 2x2 tile furniture footprints.
+- Stools, chairs, barrel, plant, rug, and door were scaled down to support clear walkable lanes.
+- The entrance lane from the lower doorway toward the bar and seating remains open.
 
-Visual effect:
+Expected visual effect:
 
-The starting area should now feel more like a small Pokemon / DS-era town edge route leading to destination scenes, while still preserving the original Pub Friend scene structure.
+The pub should feel closer to a Stardew/Pokemon-style interior: visible zones, repeated floor logic, furniture clusters, and a clear walkable route through the room.
 
 ## Beach Destination Pass
 
-The first beach destination scene now uses the promoted beach object-atlas assets.
+- `public/locations/beach.json` uses `propAssetPack: "beach"`.
+- The beach destination uses promoted named PNG props for sand, shoreline, water, hut/signage, boardwalk/entry details, and beach-day clusters.
+- Walkable sand fills the arrival/play area.
+- Blocked water sits along the top and right edge.
+- Props are grouped around arrival, hut, shoreline, and relaxation zones.
 
-What changed:
-
-- Added the first beach production prop list to `WorldScene` so `propAssetPack: "beach"` can preload named PNGs from `public/assets/props/beach/`.
-- Updated `public/locations/beach.json` to use `propAssetPack: "beach"`.
-- Rebuilt the beach destination map so walkable sand fills the arrival/play area and blocked water sits along the top and right edge.
-- Added a readable shoreline using water, wave, and rock-shore assets.
-- Added arrival/edge pieces near the lower-left entry: boardwalk stairs, fencing, and a beach sign.
-- Added a small hut landmark with blue roof and lifebuoy wall detail near the edge.
-- Added a beach-day cluster with umbrella, towel, deck chair, cooler, bucket, surfboard, and flag.
-- Added light environmental details such as grass, dune grass, driftwood, sandcastle, and a seagull.
-
-Visual effect:
-
-The Beach Day destination should now read as a spacious beach scene rather than a labelled placeholder. The ocean is the destination feature, the sand remains walkable, and props are grouped around believable arrival, hut, shoreline, and relaxation zones.
-
-## Scene Composition Logic Pass
-
-The Pub Friend flow now has a first environment-logic pass for both the town connector and pub interior.
-
-Composition rules applied:
-
-- Every prop should support route logic, visual logic, or story logic.
-- Paths should lead to destination doors, not merely decorate the floor.
-- Signs belong near route decisions, entrances, and destination cues.
-- Lamps frame important path bends, entrances, and service areas.
-- Benches belong beside quieter path edges rather than in the walking lane.
-- Fences define boundaries and imply land or scenery behind them.
-- Bushes, flowers, rocks, and trees support edges, corners, and clusters.
-- Building pieces should read as part of a structure around a real entrance.
-- Pub furniture should form zones: bar service, seating groups, wall fixtures, entrance space, and punchline props.
-- Rugs should anchor furniture zones without blocking the player's route.
-
-What changed:
-
-- The Town Edge Route now has a clearer route spine from spawn and Jack toward the pub door.
-- Outside-route props were reduced and repositioned so boundaries, foliage, signs, and landmarks explain where the viewer should look.
-- The pub spawn now lines up with the bottom entrance area.
-- The pub bar is concentrated against the back wall with shelves and taps nearby.
-- Tables, stools, and chairs now form smaller seating groups with open walking lanes between them.
-- Fireplace, lamps, sign, window, shelf, plant, and barrel are placed against walls or edges where they make environmental sense.
-
-Visual effect:
-
-The scenes should feel more intentionally built and less like asset samples placed on a map. The player and Jack remain the movement focus, while the environment now guides the journey and supports the pub reveal.
-
-## Camera And Scale Visibility Pass
-
-The Pub Friend flow now has location-level camera and scale controls for readability.
-
-What changed:
-
-- `WorldScene.createCamera` now reads a clamped `cameraZoom` value instead of relying on one hard-coded zoom for every location.
-- `WorldScene` now supports `propScaleMultiplier` so a location can lightly reduce or increase visual prop size without editing every prop entry.
-- `WorldScene` now supports `playerScale` for the player and NPCs, clamped to keep characters readable.
-- Asset props and generated fallback props both respect the location prop multiplier.
-- The Town Edge Route uses `cameraZoom: 1.65`, `playerScale: 0.95`, and `propScaleMultiplier: 0.9`.
-- The Pub uses `cameraZoom: 1.85`, `playerScale: 0.95`, and `propScaleMultiplier: 0.92`.
-
-Clamp guidance:
-
-- Camera zoom is clamped from `1.35` to `2.8`.
-- Location prop scale is clamped from `0.75` to `1.15`.
-- Character scale is clamped from `0.85` to `1.15`.
-
-Visual effect:
-
-Town should now show more of the route spine, signs, lamps, building edge, and path context at once. The pub should now show more of the bar, seating groups, entrance lane, and rug area while keeping the cosy interior readable. This pass keeps the camera player-follow only and does not re-enable tilemap rendering.
-
-## Multi-Scene Object Workflow
-
-The object atlas tooling now works across multiple scene packs instead of only the pub.
-
-What changed:
-
-- `npm run extract-objects` still defaults to pub.
-- `npm run extract-objects -- <pack>` can extract `pub`, `outside-route`, `beach`, `park`, or `cafe` source sheets into separate raw folders.
-- Extraction writes `object_###.png`, `contact_sheet.png`, `manifest.json`, and `review.html` for each pack.
-- `npm run promote-props` still defaults to pub.
-- `npm run promote-props -- <pack>` promotes selected raw assets for the chosen pack only.
-- New empty selection maps were added for `outside-route`, `beach`, `park`, and `cafe`.
-
-Boundary:
-
-This is a workflow/tooling change only. No game rendering was added for the new packs, and existing pub assets were not deleted.
-
-## Pub Tilemap Debug Pass
-
-A temporary pub-only debugging pass was added to diagnose the failed tileset render.
-
-Runtime console logs can report:
-
-- Pub map path.
-- Pub tileset path.
-- Whether the map JSON loaded.
-- Whether the tileset texture loaded.
-- Tile width and tile height used by the Phaser spritesheet loader.
-- Tileset image width, image height, frame count, and first frame names as Phaser sees them.
-- Number of map layers and objects.
-- Number of rendered tiles.
-- Unique map symbols and frame IDs.
-- The first 20 tile frame IDs being rendered.
-- Whether the highest frame ID used by the map fits inside the loaded tileset frame count.
-
-These logs now only matter when `useTilemap: true` is set for a location.
-
-Static map inspection:
-
-- `public/maps/pub_mvp.json` expects `tileSize: 16`.
-- Its legend maps visible tiles to frame IDs `0` through `7`, with `-1` used for empty overlay cells.
-- The map contains varied tile symbols and frame IDs; it is not only one repeated tile.
-
-Tileset slicing status:
-
-- The GitHub API confirms `public/assets/tilesets/pub_mvp_tileset.png` is a binary PNG file.
-- Browser testing showed the PNG is not a strict 16x16 grid tileset.
-- The PNG is a good art direction reference and asset sheet, but it contains mixed-size furniture/prop art with uneven spacing.
-- Tilemap rendering is disabled until a proper grid tileset or object atlas is prepared.
-
-## Pub Destination NPC Handling
-
-The pub destination does not need Jack to spawn at the town-only `townCenter` point.
-
-`WorldScene` now skips actors without a valid spawn silently when the current location is the scene's destination location. This prevents the missing `townCenter` spawn warning in the pub while keeping normal spawn warnings active for route locations such as town.
-
-## Untested Due To Sandbox Command Issue
+## Validation Status
 
 The local command runner is still blocked before npm can start with:
 
@@ -266,10 +121,9 @@ Because of that, these have not been verified by local command execution in this
 - `npm run validate-content`
 - `npm run build`
 - Browser/manual Phaser runtime behaviour
-- Actual keyboard feel in the canvas
 - Exact camera framing in 9:16 mode
 
-GitHub Actions validation/build has been added separately through `.github/workflows/validate.yml`.
+GitHub Actions validation/build exists through `.github/workflows/validate.yml`, but this pass still needs the next CI result or a working local runner to confirm validation and build.
 
 ## Manual Test Checklist
 
@@ -278,47 +132,23 @@ GitHub Actions validation/build has been added separately through `.github/workf
 3. Run `npm run build`.
 4. Run `npm run dev`.
 5. Open the local Vite URL.
-6. Confirm the scene selector appears before gameplay.
-7. Confirm `Pub Friend` is selectable.
-8. Confirm `Beach Day` is selectable.
-9. Confirm the menu shows scene title, description, starting location, and asset status.
-10. Press `Space` or `Enter` to start Pub Friend.
-11. Confirm the title card appears.
-12. Press `Space` or wait for the title card duration.
-13. Confirm town loads as the outside-route / town-edge connector area.
-14. Confirm the player appears.
-15. Confirm Jack appears near the player.
-16. Confirm the path visually leads from the spawn/Jack area toward the pub entrance.
-17. Confirm the wider town camera shows more of the route, edge props, and pub direction context without leaving the map bounds.
-18. Walk around town and confirm the camera follows the player without showing outside the map.
-19. Stand near Jack and press `Space` or `Enter`.
-20. Confirm the DS-era dialogue box opens.
-21. Confirm the typewriter effect runs.
-22. Press `Space` mid-line and confirm the line completes instantly.
-23. Press `Space` again and confirm dialogue closes.
-24. Confirm Jack starts walking toward the pub door through the connector route.
-25. Follow Jack and confirm the player can move freely along the route.
-26. Walk into the highlighted pub door.
-27. Confirm the pub interior loads.
-28. Confirm the pub entrance area is readable and not blocked by furniture.
-29. Confirm the wider pub camera shows the bar, seating, entrance lane, and rug area together.
-30. Confirm the bar, shelves, taps, tables, stools, wall fixtures, and rug feel like organised zones.
-31. Confirm the pub uses the generated renderer by default and shows no random sliced tile fragments.
-32. Confirm the pub displays named production PNG props when those files are available.
-33. Confirm the beer punchline is visually obvious.
-34. Confirm no missing `townCenter` spawn warning appears in the pub.
-35. Press `Escape` and confirm the scene selector returns.
-36. Start Beach Day and confirm Beth appears in town.
-37. Confirm Beach Day dialogue and Beth's route toward the beach path still work.
-38. Enter the beach path and confirm the beach destination loads.
-39. Confirm the beach uses named production PNG props for shoreline, water, hut, sign, boardwalk, and beach clusters.
-40. Confirm water stays on the edge of the playable space and the sand area remains walkable.
-41. Start Pub Friend again and confirm the scene still loads.
-42. Start Pub Friend, press `R`, and confirm the scene restarts.
-43. Press `H` and confirm the recording overlay hides/shows.
-44. Press `?` and confirm the controls screen opens.
-45. Toggle 9:16 canvas mode and repeat the key checks for readability.
+6. Select `Pub Friend`.
+7. Confirm the title card appears.
+8. Confirm town loads as the outside-route / town-edge connector.
+9. Confirm the camera shows more of the route and destination context.
+10. Confirm the player and Jack are readable but smaller than before.
+11. Confirm the repeated path leads visually from spawn and Jack toward the pub door.
+12. Confirm the route sign, lamp, mailbox, building pieces, fences, trees, and hedges do not dominate the frame.
+13. Talk to Jack and confirm dialogue still works.
+14. Confirm Jack walks toward the pub door through the connector route.
+15. Enter the pub door.
+16. Confirm the pub interior loads with no random tilemap fragments.
+17. Confirm the pub camera shows more of the room at once.
+18. Confirm bar, seating, wall fixtures, rug, and entrance lane read as separate interior zones.
+19. Confirm the player can move through the pub and the beer punchline remains visible.
+20. Press `Escape`, `R`, `H`, and `?` to confirm recording controls still work.
+21. Select `Beach Day` and confirm the beach scene still loads.
 
 ## Next Recommended Task
 
-Run browser tests for Pub Friend and Beach Day to confirm the asset-led layouts read well in motion, then tune beach scale/camera from screenshots before building the next destination scene.
+Run browser or CI validation for the latest layout pass, then tune from screenshots in vertical recording mode before moving on to another destination scene.
