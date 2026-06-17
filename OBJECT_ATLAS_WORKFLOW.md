@@ -18,10 +18,25 @@ cafe
 
 Each pack has its own source sheet, raw review folder, selection map, and production prop folder. Keep packs separate so a beach pass cannot accidentally overwrite pub assets.
 
+## Support Packs
+
+The workflow also supports expansion packs:
+
+```text
+pub-accessory
+outside-route-additional
+```
+
+Support packs are not replacement scene packs. They are extra extraction/promotion lanes for accessory sheets that can add more candidates to the existing pub and outside-route art direction without deleting or overwriting the main `pub` or `outside-route` production assets.
+
+Promotion output for a support pack stays in its own folder until a later reviewed asset pass decides whether any promoted PNGs should be wired into rendering.
+
 | Pack | Source sheet | Raw output folder |
 | --- | --- | --- |
 | `pub` | `references/source-sheets/pub_object_sheet.png` | `public/assets/props/pub/raw/` |
+| `pub-accessory` | `references/source-sheets/pub_accessory_object_sheet.png` | `public/assets/props/pub-accessory/raw/` |
 | `outside-route` | `references/source-sheets/outside_route_object_sheet.png` | `public/assets/props/outside-route/raw/` |
+| `outside-route-additional` | `references/source-sheets/outside_route_additional_object_sheet.png` | `public/assets/props/outside-route-additional/raw/` |
 | `beach` | `references/source-sheets/beach_object_sheet.png` | `public/assets/props/beach/raw/` |
 | `park` | `references/source-sheets/park_object_sheet.png` | `public/assets/props/park/raw/` |
 | `cafe` | `references/source-sheets/cafe_object_sheet.png` | `public/assets/props/cafe/raw/` |
@@ -42,6 +57,7 @@ Raw extracted props live in each pack's `raw/` folder, for example:
 
 ```text
 public/assets/props/pub/raw/
+public/assets/props/pub-accessory/raw/
 public/assets/props/beach/raw/
 ```
 
@@ -72,7 +88,9 @@ Pack-specific extraction:
 
 ```bash
 npm run extract-objects -- pub
+npm run extract-objects -- pub-accessory
 npm run extract-objects -- outside-route
+npm run extract-objects -- outside-route-additional
 npm run extract-objects -- beach
 npm run extract-objects -- park
 npm run extract-objects -- cafe
@@ -122,6 +140,8 @@ The file maps clean production names to raw candidates:
 
 Edit this file manually after reviewing the raw crops. The left side becomes the production filename, and the right side points to the selected raw crop.
 
+Support-pack selection maps start empty by design. Fill them only after reviewing that pack's contact sheet.
+
 ## Promotion Command
 
 Default pub promotion still works:
@@ -134,7 +154,9 @@ Pack-specific promotion:
 
 ```bash
 npm run promote-props -- pub
+npm run promote-props -- pub-accessory
 npm run promote-props -- outside-route
+npm run promote-props -- outside-route-additional
 npm run promote-props -- beach
 npm run promote-props -- park
 npm run promote-props -- cafe
@@ -161,5 +183,7 @@ npm run promote-props -- beach --overwrite
 ## Current Boundary
 
 This workflow only prepares, reviews, and promotes object PNG assets. It does not modify Phaser rendering, scene loading, map data, gameplay, dialogue, or controls.
+
+Support packs also do not automatically merge into the main scene packs. A later reviewed asset pass can decide whether to copy, reference, or preload promoted support-pack PNGs.
 
 A later asset pass can wire approved production props into an object atlas or placement workflow after the promoted files have been reviewed.
