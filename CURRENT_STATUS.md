@@ -17,7 +17,7 @@
 - `Pub Friend` starts in `public/locations/town.json`.
 - The town location is now a town-edge / outside-route connector using `propAssetPack: "outside-route"`.
 - Jack spawns at the `townCenter` NPC spawn point.
-- Jack's scripted path still leads along the route toward the pub door.
+- Jack's scripted path now follows the rebuilt sketch-based route spine toward the pub door.
 - The `pubDoor` exit still points to `public/locations/pub.json` and spawns the player at the pub door.
 - The pub uses `useTilemap: false`, so the broken mixed-size tileset slicing path remains disabled.
 - The pub uses promoted named PNG props from `public/assets/props/pub/` with generated shape fallbacks when a named image is missing.
@@ -85,6 +85,31 @@ What changed:
 Expected visual effect:
 
 The town connector should read more like a Pokemon-style route: a small player on a readable path with destination cues and boundary framing, rather than a close-up collage of oversized props.
+
+## Sketch-Based Town Route Rebuild
+
+The Town Edge Route has been rebuilt around the attached sketch plan instead of incremental prop placement.
+
+Composition order now used:
+
+- Main walkable route first: a single continuous left-to-right path begins near the player and Jack, then bends into the pub entrance.
+- Pub destination second: the pub building, doorway, lamp, sign, and entrance shadows sit on the right side as the clear story destination.
+- Boundaries third: trees, hedges, bushes, fences, rough ground, and a small water edge frame the route instead of floating in the middle of it.
+- Small details last: path edges, dirt patches, tufts, flowers, and shadows are used as accents near route edges, bushes, and building edges.
+
+What changed:
+
+- Player spawn moved to the left/centre-left side of the route.
+- Jack spawn moved onto the same route spine.
+- The old broken block-feeling path fragments were replaced by a simpler continuous route.
+- `pubDoor` moved to the right-side pub entrance at the end of the route.
+- Jack's scripted movement points were updated to follow the rebuilt route and turn into the pub doorway.
+- Left-side trees and hedges now read as the natural boundary from the sketch.
+- Lower route bushes, flowers, fence support, rough ground, and small water/edge detail support the route without cluttering it.
+
+Expected visual effect:
+
+The town should now read more like a Pokemon-style route to a destination: start on the left, follow the obvious path, pass natural boundaries and route markers, and arrive at the pub on the right.
 
 ## Town Edge Route Support Polish
 
@@ -189,4 +214,4 @@ GitHub Actions validation/build exists through `.github/workflows/validate.yml`,
 
 ## Next Recommended Task
 
-Run browser or CI validation for the latest Town Edge Route support polish, then do a quick visual check of Pub Friend to confirm the new path accents and grass details remain subtle in vertical framing.
+Run browser or CI validation for the latest sketch-based Town Edge Route rebuild, then do a quick visual check of Pub Friend to confirm the route reads clearly in vertical framing.
