@@ -7,9 +7,17 @@ const SCENE_PACKS = {
     source: 'references/source-sheets/pub_object_sheet.png',
     outputDir: 'public/assets/props/pub/raw',
   },
+  'pub-accessory': {
+    source: 'references/source-sheets/pub_accessory_object_sheet.png',
+    outputDir: 'public/assets/props/pub-accessory/raw',
+  },
   'outside-route': {
     source: 'references/source-sheets/outside_route_object_sheet.png',
     outputDir: 'public/assets/props/outside-route/raw',
+  },
+  'outside-route-additional': {
+    source: 'references/source-sheets/outside_route_additional_object_sheet.png',
+    outputDir: 'public/assets/props/outside-route-additional/raw',
   },
   beach: {
     source: 'references/source-sheets/beach_object_sheet.png',
