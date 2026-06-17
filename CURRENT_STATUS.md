@@ -30,6 +30,7 @@
 - Beach props are promoted production assets in `public/assets/props/beach/`.
 - `WorldScene` supports location prop packs through `propAssetPack`.
 - `WorldScene` preloads the first production prop packs for `pub`, `outside-route`, and `beach`.
+- `WorldScene` also preloads any explicit `assetPack` named on individual props, so support-pack details can render without replacing the main location pack.
 - Missing named PNG props fall back to generated shape props instead of crashing the scene.
 - The object extraction and promotion scripts support separate scene packs for `pub`, `outside-route`, `beach`, `park`, and `cafe`.
 - The object extraction and promotion scripts also support expansion packs for `pub-accessory` and `outside-route-additional`.
@@ -84,6 +85,23 @@ What changed:
 Expected visual effect:
 
 The town connector should read more like a Pokemon-style route: a small player on a readable path with destination cues and boundary framing, rather than a close-up collage of oversized props.
+
+## Town Edge Route Support Polish
+
+The town route now uses named support assets from `public/assets/props/outside-route-additional/` for a light readability pass.
+
+What changed:
+
+- Added subtle path-edge accents around the existing path instead of rebuilding the route.
+- Added small dirt patches, grass tufts, tiny flowers, small bushes, and ground shadows to break up flat grass.
+- Added doorway/building shadow support near the pub entrance so the pub cue feels more grounded.
+- Added small fence support pieces where existing fences already define boundaries.
+- Kept the core route spine unchanged: spawn -> Jack -> path -> pub cue -> pub entrance.
+- Kept the additions sparse so Jack, the player, and the pub transition remain readable.
+
+Expected visual effect:
+
+The Town Edge Route should feel less flat and more naturally edged while still reading as the same simple, walkable Pub Friend route.
 
 ## Pub Interior Layout Grammar Pass
 
@@ -171,4 +189,4 @@ GitHub Actions validation/build exists through `.github/workflows/validate.yml`,
 
 ## Next Recommended Task
 
-Run browser or CI validation for the latest tooling pass, then extract the two support sheets and review their generated contact sheets before choosing any production asset mappings.
+Run browser or CI validation for the latest Town Edge Route support polish, then do a quick visual check of Pub Friend to confirm the new path accents and grass details remain subtle in vertical framing.
