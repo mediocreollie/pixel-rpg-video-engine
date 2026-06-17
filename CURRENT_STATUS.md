@@ -82,23 +82,34 @@ Expected visual effect:
 
 The town connector should read more like a Pokemon-style route: a small player on a readable path with destination cues and boundary framing, rather than a close-up collage of oversized props.
 
-## Pub Interior Pass
+## Pub Interior Layout Grammar Pass
+
+The pub has been refined around room grammar rather than extra decoration.
+
+Rules applied:
+
+- Room shell comes first: walls, windows, sign, lamps, fireplace, and plant sit on or near room edges.
+- Floor comes second: the continuous generated pub-floor texture now carries the main floor read instead of visible large image patches.
+- Walkable lanes come third: the central entrance-to-bar lane remains open and seating is pushed into left and lower-right pockets.
+- The back-wall bar/service zone is one readable band, with shelf, counter, corner piece, keg tap, and lamps grouped together.
+- Seating clusters now have stools/chairs placed in relation to tables rather than as isolated objects.
+- The rug anchors the lower-right seating group instead of sitting in the middle of the main lane.
+- Surface props remain tied to surfaces through the named table/bar assets: beer tables contain mugs, bottle shelf sits behind the bar, and keg/tap sits by the service zone.
+- Empty space is intentional, especially between the lower door, the bar, and both seating pockets.
 
 What changed:
 
-- `cameraZoom` was reduced to `1.55` so the bar, seating area, entrance lane, and wall fixtures are visible together more often.
-- `playerScale` was reduced to `0.9`.
-- `propScaleMultiplier` was reduced to `0.78`.
-- The single large floor prop was replaced by repeated smaller floor pieces so the room reads more like a tiled RPG interior.
-- Wall, sign, lamp, window, and fireplace assets were reduced to wall-feature scale.
-- Bottle shelf, bar counter, bar corner, and keg/tap assets were reduced into a clear back-wall service zone.
-- Tables now read closer to 2x2 tile furniture footprints.
-- Stools, chairs, barrel, plant, rug, and door were scaled down to support clear walkable lanes.
-- The entrance lane from the lower doorway toward the bar and seating remains open.
+- Removed the repeated `floor_wood.png` prop patches from the pub layout so the floor reads as one continuous room surface.
+- Kept the same camera and scale settings from the previous pass: `cameraZoom: 1.55`, `playerScale: 0.9`, and `propScaleMultiplier: 0.78`.
+- Tightened wall props against the shell: back wall, corners, sign, hanging lamps, window, fireplace, and plant.
+- Repositioned the bar, shelf, bar corner, and keg tap into a stronger back-wall service area.
+- Kept a left seating cluster around the round table.
+- Moved the rug/table/chair/stool cluster into the lower-right seating area so it does not block the entrance lane.
+- Reduced scattered feel by removing the central seating island and keeping fewer isolated props.
 
 Expected visual effect:
 
-The pub should feel closer to a Stardew/Pokemon-style interior: visible zones, repeated floor logic, furniture clusters, and a clear walkable route through the room.
+The pub should now read as one coherent Stardew/Pokemon-style interior: a room shell, a continuous floor, a clear bar zone, believable seating pockets, and an open walkable lane from entrance to bar and seating.
 
 ## Beach Destination Pass
 
@@ -144,11 +155,13 @@ GitHub Actions validation/build exists through `.github/workflows/validate.yml`,
 15. Enter the pub door.
 16. Confirm the pub interior loads with no random tilemap fragments.
 17. Confirm the pub camera shows more of the room at once.
-18. Confirm bar, seating, wall fixtures, rug, and entrance lane read as separate interior zones.
-19. Confirm the player can move through the pub and the beer punchline remains visible.
-20. Press `Escape`, `R`, `H`, and `?` to confirm recording controls still work.
-21. Select `Beach Day` and confirm the beach scene still loads.
+18. Confirm the pub floor reads as one continuous interior surface rather than separate floor islands.
+19. Confirm wall props sit against the room shell.
+20. Confirm the back-wall bar/service zone, left seating cluster, lower-right seating cluster, and entrance lane are visually distinct.
+21. Confirm the player can move through the pub and the beer punchline remains visible.
+22. Press `Escape`, `R`, `H`, and `?` to confirm recording controls still work.
+23. Select `Beach Day` and confirm the beach scene still loads.
 
 ## Next Recommended Task
 
-Run browser or CI validation for the latest layout pass, then tune from screenshots in vertical recording mode before moving on to another destination scene.
+Run browser or CI validation for the latest pub layout pass, then tune from screenshots in vertical recording mode before moving on to another destination scene.
