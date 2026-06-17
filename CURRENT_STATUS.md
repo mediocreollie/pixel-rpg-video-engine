@@ -32,6 +32,9 @@
 - `WorldScene` preloads the first production prop packs for `pub`, `outside-route`, and `beach`.
 - Missing named PNG props fall back to generated shape props instead of crashing the scene.
 - The object extraction and promotion scripts support separate scene packs for `pub`, `outside-route`, `beach`, `park`, and `cafe`.
+- The object extraction and promotion scripts also support expansion packs for `pub-accessory` and `outside-route-additional`.
+- The support packs write to their own folders and do not replace existing `pub` or `outside-route` production assets.
+- Empty selection maps now exist at `public/assets/props/pub-accessory/selected-props.json` and `public/assets/props/outside-route-additional/selected-props.json`.
 
 ## Tilemap Status
 
@@ -119,6 +122,15 @@ The pub should now read as one coherent Stardew/Pokemon-style interior: a room s
 - Blocked water sits along the top and right edge.
 - Props are grouped around arrival, hut, shoreline, and relaxation zones.
 
+## Support Extraction Packs
+
+Two expansion/support packs are now available for object extraction and promotion:
+
+- `pub-accessory` reads `references/source-sheets/pub_accessory_object_sheet.png` and writes raw crops to `public/assets/props/pub-accessory/raw/`.
+- `outside-route-additional` reads `references/source-sheets/outside_route_additional_object_sheet.png` and writes raw crops to `public/assets/props/outside-route-additional/raw/`.
+
+These packs are tooling lanes only. They do not alter game rendering, preloads, maps, promoted pub assets, or promoted outside-route assets.
+
 ## Validation Status
 
 The local command runner is still blocked before npm can start with:
@@ -142,26 +154,21 @@ GitHub Actions validation/build exists through `.github/workflows/validate.yml`,
 2. Run `npm run validate-content`.
 3. Run `npm run build`.
 4. Run `npm run dev`.
-5. Open the local Vite URL.
-6. Select `Pub Friend`.
-7. Confirm the title card appears.
-8. Confirm town loads as the outside-route / town-edge connector.
-9. Confirm the camera shows more of the route and destination context.
-10. Confirm the player and Jack are readable but smaller than before.
-11. Confirm the repeated path leads visually from spawn and Jack toward the pub door.
-12. Confirm the route sign, lamp, mailbox, building pieces, fences, trees, and hedges do not dominate the frame.
-13. Talk to Jack and confirm dialogue still works.
-14. Confirm Jack walks toward the pub door through the connector route.
+5. Run `npm run extract-objects -- pub-accessory` after confirming the source sheet exists.
+6. Run `npm run extract-objects -- outside-route-additional` after confirming the source sheet exists.
+7. Confirm each support pack writes raw crops, `contact_sheet.png`, `manifest.json`, and `review.html` to its own raw folder.
+8. Confirm `npm run promote-props -- pub-accessory` exits cleanly with the empty selection map.
+9. Confirm `npm run promote-props -- outside-route-additional` exits cleanly with the empty selection map.
+10. Open the local Vite URL.
+11. Select `Pub Friend`.
+12. Confirm the title card appears.
+13. Confirm town loads as the outside-route / town-edge connector.
+14. Confirm Jack and the pub door flow still work.
 15. Enter the pub door.
 16. Confirm the pub interior loads with no random tilemap fragments.
-17. Confirm the pub camera shows more of the room at once.
-18. Confirm the pub floor reads as one continuous interior surface rather than separate floor islands.
-19. Confirm wall props sit against the room shell.
-20. Confirm the back-wall bar/service zone, left seating cluster, lower-right seating cluster, and entrance lane are visually distinct.
-21. Confirm the player can move through the pub and the beer punchline remains visible.
-22. Press `Escape`, `R`, `H`, and `?` to confirm recording controls still work.
-23. Select `Beach Day` and confirm the beach scene still loads.
+17. Confirm the player can move through the pub and the beer punchline remains visible.
+18. Select `Beach Day` and confirm the beach scene still loads.
 
 ## Next Recommended Task
 
-Run browser or CI validation for the latest pub layout pass, then tune from screenshots in vertical recording mode before moving on to another destination scene.
+Run browser or CI validation for the latest tooling pass, then extract the two support sheets and review their generated contact sheets before choosing any production asset mappings.
