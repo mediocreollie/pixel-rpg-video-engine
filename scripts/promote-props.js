@@ -3,7 +3,9 @@ import path from 'node:path';
 
 const SCENE_PACKS = {
   pub: { propDir: 'public/assets/props/pub' },
+  'pub-accessory': { propDir: 'public/assets/props/pub-accessory' },
   'outside-route': { propDir: 'public/assets/props/outside-route' },
+  'outside-route-additional': { propDir: 'public/assets/props/outside-route-additional' },
   beach: { propDir: 'public/assets/props/beach' },
   park: { propDir: 'public/assets/props/park' },
   cafe: { propDir: 'public/assets/props/cafe' },
