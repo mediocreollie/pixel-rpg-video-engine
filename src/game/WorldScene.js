@@ -263,17 +263,34 @@ export class WorldScene extends Phaser.Scene {
 
   preloadLocationPropAssets(locationId, location) {
     const pack = this.getLocationPropAssetPack(locationId, location);
-    const assets = PROP_ASSET_PACKS[pack];
+    const assetsByPack = new Map();
 
-    if (!assets) {
-      return;
-    }
-
-    assets.forEach((assetName) => {
-      const key = this.getPropAssetKey(pack, assetName);
-      if (!this.textures.exists(key)) {
-        this.load.image(key, `/assets/props/${pack}/${assetName}`);
+    const addAsset = (assetPack, assetName) => {
+      if (!assetPack || !assetName) {
+        return;
       }
+
+      if (!assetsByPack.has(assetPack)) {
+        assetsByPack.set(assetPack, new Set());
+      }
+
+      assetsByPack.get(assetPack).add(assetName);
+    };
+
+    (PROP_ASSET_PACKS[pack] || []).forEach((assetName) => addAsset(pack, assetName));
+    asArray(location?.props).forEach((prop) => {
+      if (prop?.asset) {
+        addAsset(prop.assetPack || pack, prop.asset);
+      }
+    });
+
+    assetsByPack.forEach((assetNames, assetPack) => {
+      assetNames.forEach((assetName) => {
+        const key = this.getPropAssetKey(assetPack, assetName);
+        if (!this.textures.exists(key)) {
+          this.load.image(key, `/assets/props/${assetPack}/${assetName}`);
+        }
+      });
     });
   }
 
