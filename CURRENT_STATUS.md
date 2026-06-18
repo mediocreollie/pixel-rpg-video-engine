@@ -48,19 +48,22 @@ Design order now used:
 What changed:
 
 - The route now starts at the left-middle edge and leads mostly left-to-right.
-- The path is one continuous dirt route with a gentle bend into the pub entrance.
+- The visible route is now rendered by the grid terrain layer in `map.tiles`, using repeated tile symbols instead of large decorative path image props.
+- A matching `terrain` field is present in `public/locations/town.json` and the location schema now documents that simple terrain-layer shape for future content work.
+- The path is one continuous dirt route with a gentle bend and a widened arrival area at the pub entrance.
 - Disconnected path carpet blocks were removed.
+- Path-edge support images are only used as subtle accents; they no longer define the route.
 - The pub building sits on the right side as the clear destination.
 - The pub door, stone/paved doorstep, lamp, and route sign make the endpoint readable.
 - Trees and hedges frame the left and upper-left route boundary.
 - Fences, bushes, and rocks support the lower boundary.
 - Water has been omitted for now because the current promoted packs do not provide enough edge pieces to make it read cleanly.
 - Flowers and tufts are limited to path edges, bushes, and the pub foundation.
-- Jack's movement route is aligned to the visible path.
+- Jack's movement route remains aligned to the visible path.
 
 Expected visual effect:
 
-The town should read as a DS-era RPG route: enter from the left, follow the dirt path through a lightly wooded town edge, and arrive at the cosy pub on the right.
+The town should read as a DS-era RPG route: enter from the left, follow the continuous dirt terrain path through a lightly wooded town edge, and arrive at the cosy pub on the right.
 
 ## Pub Interior State
 
@@ -116,4 +119,4 @@ GitHub Actions validation/build exists through `.github/workflows/validate.yml`,
 
 ## Next Recommended Task
 
-Run CI or local validation once the command runner is available, then visually test Pub Friend in vertical framing to confirm the Town Edge Route v2 blockout reads before adding any further decoration.
+Run CI or local validation once the command runner is available, then visually test Pub Friend in vertical framing to confirm the Town Edge Route v2 grid terrain reads before adding any further decoration.
