@@ -10,6 +10,26 @@
     "background": { "type": "string" },
     "musicPath": { "type": "string" },
     "ambiencePath": { "type": "string" },
+    "tileSize": { "type": "number" },
+    "width": { "type": "number" },
+    "height": { "type": "number" },
+    "assetPacks": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "propAssetPack": { "type": "string" },
+    "cameraZoom": { "type": "number" },
+    "playerScale": { "type": "number" },
+    "propScaleMultiplier": { "type": "number" },
+    "display": {
+      "type": "object",
+      "properties": {
+        "cameraZoom": { "type": "number" },
+        "playerScale": { "type": "number" },
+        "propScaleMultiplier": { "type": "number" },
+        "cameraMode": { "type": "string" }
+      }
+    },
     "playerSpawnPoint": { "type": "string" },
     "playerSpawns": {
       "type": "object",
@@ -73,6 +93,66 @@
           "type": "array",
           "items": { "type": "string" }
         }
+      }
+    },
+    "layers": {
+      "type": "object",
+      "properties": {
+        "terrain": {
+          "type": "object",
+          "properties": {
+            "tileSize": { "type": "number" },
+            "legend": { "type": "object" },
+            "rows": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        },
+        "edges": {
+          "type": "object",
+          "properties": {
+            "legend": { "type": "object" },
+            "rows": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        },
+        "boundaries": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "props": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "overPlayer": {
+          "type": "array",
+          "items": { "type": "object" }
+        }
+      }
+    },
+    "collision": {
+      "type": "object",
+      "properties": {
+        "fromTerrain": { "type": "boolean" },
+        "fromFootprints": { "type": "boolean" },
+        "rects": {
+          "type": "array",
+          "items": { "type": "object" }
+        }
+      }
+    },
+    "triggers": {
+      "type": "array",
+      "items": { "type": "object" }
+    },
+    "spawns": {
+      "type": "object",
+      "properties": {
+        "player": { "type": "object" },
+        "npcs": { "type": "object" }
       }
     }
   }
