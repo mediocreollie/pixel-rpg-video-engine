@@ -16,7 +16,10 @@
 - `ARCHITECTURE_REVIEW.md` captures the current runtime, asset, and scene-building architecture.
 - `REFERENCE_MAP_ARCHITECTURE.md` compares the current project to practical Pokemon Platinum-style and Stardew Valley-style map architecture principles.
 - `TARGET_MAP_ARCHITECTURE.md` defines the project-specific target contract for map layers, object roles, footprints, triggers, collision, display settings, examples, validation targets, and compatibility rules.
-- The recommended next architecture task is to add schema and validation support for the target fields without changing runtime rendering or converting locations.
+- `public/schemas/location.schema.json` now supports the first target layered map fields while preserving older compatible locations.
+- `WorldScene` can render the target layer order for locations with `layers.terrain.rows`: terrain, edges, boundaries, props, optional over-player visuals, then actors and triggers.
+- `public/locations/town.json` is the first proof location using the target layered map model.
+- Pub and beach remain on the older compatible structure for now and should not be migrated until Town Edge Route is visually confirmed.
 - The target model separates terrain, edges, boundaries, props, over-player visuals, actors, triggers, camera/display settings, and layout grammar while keeping the existing JSON-first video workflow.
 
 ## Pub Friend Flow
@@ -24,7 +27,7 @@
 - `Pub Friend` starts in `public/locations/town.json`.
 - Jack spawns at `townCenter` on the Town Edge Route v2 dirt path.
 - Jack's scripted path follows the visible route toward the pub door.
-- The `pubDoor` exit points to `public/locations/pub.json` and spawns the player at the pub door.
+- The `pubDoor` trigger points to `public/locations/pub.json` and spawns the player at the pub door.
 - The pub uses `useTilemap: false`, so the broken mixed-size tileset slicing path remains disabled.
 - The pub uses promoted named PNG props from `public/assets/props/pub/` with generated shape fallbacks when a named image is missing.
 
@@ -34,39 +37,35 @@
 - Outside-route props are promoted production assets in `public/assets/props/outside-route/`.
 - Outside-route support props are promoted production assets in `public/assets/props/outside-route-additional/`.
 - Beach props are promoted production assets in `public/assets/props/beach/`.
-- `WorldScene` supports location prop packs through `propAssetPack`.
-- `WorldScene` preloads the first production prop packs for `pub`, `outside-route`, and `beach`.
-- `WorldScene` also preloads any explicit `assetPack` named on individual props, so support-pack details can render without replacing the main location pack.
+- `WorldScene` supports location prop packs through `propAssetPack` and explicit per-location `assetPacks`.
+- `WorldScene` preloads old prop lists, target map layer props, edge legend assets, and explicit support-pack assets.
 - Missing named PNG props fall back to generated shape props instead of crashing the scene.
 - Raw `object_###.png` files are not used directly by game code.
 
-## Town Edge Route V2
+## Town Edge Route Layered Proof
 
-The Town Edge Route has been rebuilt from a terrain-first blockout.
+The Town Edge Route now uses the target layered map model.
 
-Design order now used:
+Layer order now used:
 
-1. Grass base.
-2. Continuous dirt path.
-3. Pub building and door.
-4. Boundaries.
-5. Route cues.
-6. Small decoration.
+1. Terrain.
+2. Edges.
+3. Boundaries.
+4. Props.
+5. Optional over-player visuals.
+6. Actors.
+7. Triggers and collision logic.
 
 What changed:
 
-- The route now starts at the left-middle edge and leads mostly left-to-right.
-- The visible route is now rendered by the grid terrain layer in `map.tiles`, using repeated tile symbols instead of large decorative path image props.
-- A matching `terrain` field is present in `public/locations/town.json` and the location schema now documents that simple terrain-layer shape for future content work.
-- The path is one continuous dirt route with a gentle bend and a widened arrival area at the pub entrance.
-- Disconnected path carpet blocks were removed.
-- Path-edge support images are only used as subtle accents; they no longer define the route.
-- The pub building sits on the right side as the clear destination.
-- The pub door, stone/paved doorstep, lamp, and route sign make the endpoint readable.
-- Trees and hedges frame the left and upper-left route boundary.
-- Fences, bushes, and rocks support the lower boundary.
+- The route starts at the left-middle edge and leads mostly left-to-right.
+- The visible route is rendered by `layers.terrain.rows`, using repeated tile symbols instead of large decorative path image props.
+- Path-edge support images live in `layers.edges` as accents; they no longer define the route.
+- Pub building, door, windows, trees, hedges, fences, bushes, and rocks live in `layers.boundaries`.
+- Signs, lamps, bench, shadows, flowers, tufts, barrel, and crate live in `layers.props`.
+- The `pubDoor` is represented as a `transition` trigger aligned with the visible pub entrance.
+- The old `exits`, `map`, and spawn fields remain for compatibility while the new renderer uses the layered structure.
 - Water has been omitted for now because the current promoted packs do not provide enough edge pieces to make it read cleanly.
-- Flowers and tufts are limited to path edges, bushes, and the pub foundation.
 - Jack's movement route remains aligned to the visible path.
 
 Expected visual effect:
@@ -78,11 +77,13 @@ The town should read as a DS-era RPG route: enter from the left, follow the cont
 - The pub interior is still arranged around a room shell, continuous generated floor, bar/service zone, seating pockets, and an open entrance-to-bar lane.
 - The pub remains on the generated renderer plus named prop images.
 - Tilemap rendering remains future opt-in support only.
+- The next migration target should be the pub interior only after Town Edge Route is visually confirmed.
 
 ## Beach Destination State
 
 - `public/locations/beach.json` uses `propAssetPack: "beach"`.
 - The beach destination uses promoted named PNG props for sand, shoreline, water, hut/signage, boardwalk/entry details, and beach-day clusters.
+- Beach remains on the older compatible prop-based structure for now.
 
 ## Tilemap Status
 
@@ -92,6 +93,8 @@ The town should read as a DS-era RPG route: enter from the left, follow the cont
 - Generated map rendering plus named prop images is the current stable path.
 
 ## Validation Status
+
+- `scripts/validate-content.js` now checks the target layered location structure for row widths, invalid layer names, missing promoted assets, invalid asset packs, raw asset references, and transition trigger target locations.
 
 The local command runner is still blocked before npm can start with:
 
@@ -116,15 +119,16 @@ GitHub Actions validation/build exists through `.github/workflows/validate.yml`,
 4. Run `npm run dev`.
 5. Select `Pub Friend`.
 6. Confirm the title card appears.
-7. Confirm the Town Edge Route v2 loads with a clear left-to-right dirt path.
-8. Confirm Jack starts on the path and walks toward the pub door.
-9. Confirm the player can follow the path comfortably.
-10. Confirm the pub entrance is the clearest destination on the right.
-11. Enter the pub door.
-12. Confirm the pub interior loads with no random tilemap fragments.
-13. Confirm the player can move through the pub and the beer punchline remains visible.
-14. Select `Beach Day` and confirm the beach scene still loads.
+7. Confirm the Town Edge Route loads with a clear left-to-right dirt path from `layers.terrain.rows`.
+8. Confirm path-edge accents sit on top of the terrain rather than defining the route.
+9. Confirm Jack starts on the path and walks toward the pub door.
+10. Confirm the player can follow the path comfortably.
+11. Confirm the pub entrance is the clearest destination on the right.
+12. Enter the pub door.
+13. Confirm the pub interior loads with no random tilemap fragments.
+14. Confirm the player can move through the pub and the beer punchline remains visible.
+15. Select `Beach Day` and confirm the beach scene still loads.
 
 ## Next Recommended Task
 
-Implement the immediate next task from `TARGET_MAP_ARCHITECTURE.md`: add optional schema fields for the target layer model and validate rectangular `layers.terrain.rows`, while preserving current rendering behavior and existing location JSON.
+Visually confirm Town Edge Route in the browser with the layered renderer. If the proof reads correctly, migrate the pub interior to the same layer model next; keep beach on the compatible structure until pub is stable.
