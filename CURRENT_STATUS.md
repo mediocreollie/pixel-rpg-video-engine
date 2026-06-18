@@ -15,7 +15,8 @@
 
 - `ARCHITECTURE_REVIEW.md` captures the current runtime, asset, and scene-building architecture.
 - `REFERENCE_MAP_ARCHITECTURE.md` compares the current project to practical Pokemon Platinum-style and Stardew Valley-style map architecture principles.
-- The recommended next architecture task is to write `TARGET_MAP_ARCHITECTURE.md` as the project-specific contract for map layers, roles, footprints, triggers, collision, and backward compatibility.
+- `TARGET_MAP_ARCHITECTURE.md` defines the project-specific target contract for map layers, object roles, footprints, triggers, collision, display settings, examples, validation targets, and compatibility rules.
+- The recommended next architecture task is to add schema and validation support for the target fields without changing runtime rendering or converting locations.
 - The target model separates terrain, edges, boundaries, props, over-player visuals, actors, triggers, camera/display settings, and layout grammar while keeping the existing JSON-first video workflow.
 
 ## Pub Friend Flow
@@ -126,4 +127,4 @@ GitHub Actions validation/build exists through `.github/workflows/validate.yml`,
 
 ## Next Recommended Task
 
-Write `TARGET_MAP_ARCHITECTURE.md` from `REFERENCE_MAP_ARCHITECTURE.md` before changing runtime code or converting locations. The target document should define the exact location layer contract, object roles, footprints, triggers, collision, and compatibility rules.
+Implement the immediate next task from `TARGET_MAP_ARCHITECTURE.md`: add optional schema fields for the target layer model and validate rectangular `layers.terrain.rows`, while preserving current rendering behavior and existing location JSON.
