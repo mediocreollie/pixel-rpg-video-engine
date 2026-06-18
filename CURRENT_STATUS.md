@@ -17,6 +17,7 @@
 - `REFERENCE_MAP_ARCHITECTURE.md` compares the current project to practical Pokemon Platinum-style and Stardew Valley-style map architecture principles.
 - `TARGET_MAP_ARCHITECTURE.md` defines the project-specific target contract for map layers, object roles, footprints, triggers, collision, display settings, examples, validation targets, and compatibility rules.
 - `MAP_ARCHITECTURE_IMPLEMENTATION_PLAN.md` defines the next architecture phase: audit the town route tile vocabulary, specify a proper tile kit, add footprint metadata, then rebuild Town before migrating pub or beach.
+- `TOWN_ROUTE_TILE_KIT_SPEC.md` audits the promoted outside-route assets and defines the minimum dedicated Town Route tile vocabulary needed before the next Town visual rebuild.
 - `public/schemas/location.schema.json` now supports the first target layered map fields while preserving older compatible locations.
 - `WorldScene` can render the target layer order for locations with `layers.terrain.rows`: terrain, edges, boundaries, props, optional over-player visuals, then actors and triggers.
 - `public/locations/town.json` is the first proof location using the target layered map model.
@@ -132,4 +133,4 @@ GitHub Actions validation/build exists through `.github/workflows/validate.yml`,
 
 ## Next Recommended Task
 
-Audit the existing outside-route and outside-route-additional promoted assets and create `TOWN_ROUTE_TILE_KIT_SPEC.md`, classifying usable tile assets, usable prop assets, scale/padding problems, and missing tiles required for the reference look.
+Create a dedicated 16x16 Town Route tile sheet based on `TOWN_ROUTE_TILE_KIT_SPEC.md`, then extract/slice it into `public/assets/tiles/town-route/` and add metadata before rebuilding Town Edge Route.
