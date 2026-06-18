@@ -186,31 +186,6 @@ export class WorldScene extends Phaser.Scene {
       tileHeight
     });
 
-    this.load.on('filecomplete', (key, type) => {
-      if (key === mapKey || key === tilesetKey) {
-        this.logPubTilemapDebug('preload:filecomplete', { key, type });
-      }
-    });
-
-    this.load.on('loaderror', (file) => {
-      if (file?.key === mapKey || file?.key === tilesetKey) {
-        this.logPubTilemapDebug('preload:loaderror', {
-          key: file.key,
-          type: file.type,
-          url: file.url,
-          src: file.src
-        });
-      }
-    });
-
-    this.load.once('complete', () => {
-      this.logPubTilemapDebug('preload:complete', {
-        mapJsonLoaded: Boolean(this.cache.json.get(mapKey)),
-        tilesetImageLoaded: this.textures.exists(tilesetKey),
-        tileset: this.getTilesetDebugInfo(tilesetKey)
-      });
-    });
-
     this.load.json(mapKey, tilemap.mapPath);
     this.load.spritesheet(tilesetKey, tilemap.tilesetPath, {
       frameWidth: tileWidth,
@@ -262,7 +237,7 @@ export class WorldScene extends Phaser.Scene {
   }
 
   preloadLocationPropAssets(locationId, location) {
-    const pack = this.getLocationPropAssetPack(locationId, location);
+    const defaultPack = this.getLocationPropAssetPack(locationId, location);
     const assetsByPack = new Map();
 
     const addAsset = (assetPack, assetName) => {
@@ -277,10 +252,24 @@ export class WorldScene extends Phaser.Scene {
       assetsByPack.get(assetPack).add(assetName);
     };
 
-    (PROP_ASSET_PACKS[pack] || []).forEach((assetName) => addAsset(pack, assetName));
-    asArray(location?.props).forEach((prop) => {
+    const addPropAsset = (prop) => {
       if (prop?.asset) {
-        addAsset(prop.assetPack || pack, prop.asset);
+        addAsset(prop.assetPack || defaultPack, prop.asset);
+      }
+    };
+
+    [...new Set([defaultPack, ...asArray(location?.assetPacks)])]
+      .filter(Boolean)
+      .forEach((pack) => (PROP_ASSET_PACKS[pack] || []).forEach((assetName) => addAsset(pack, assetName)));
+
+    asArray(location?.props).forEach(addPropAsset);
+    asArray(location?.layers?.boundaries).forEach(addPropAsset);
+    asArray(location?.layers?.props).forEach(addPropAsset);
+    asArray(location?.layers?.overPlayer).forEach(addPropAsset);
+
+    Object.values(location?.layers?.edges?.legend || {}).forEach((edgeDef) => {
+      if (edgeDef?.asset) {
+        addAsset(edgeDef.assetPack || defaultPack, edgeDef.asset);
       }
     });
 
@@ -302,6 +291,14 @@ export class WorldScene extends Phaser.Scene {
     return `${pack}-prop:${assetName.replace(/\.png$/i, '')}`;
   }
 
+  hasLayeredLocation() {
+    return Array.isArray(this.locationData.layers?.terrain?.rows);
+  }
+
+  getLocationTileSize() {
+    return this.locationData.tileSize || this.locationData.layers?.terrain?.tileSize || this.locationData.terrain?.tileSize || TILE_SIZE;
+  }
+
   buildLocation() {
     this.ground = this.add.graphics();
     this.blockers = this.physics.add.staticGroup();
@@ -310,38 +307,147 @@ export class WorldScene extends Phaser.Scene {
     const tilemap = this.getLoadedTilemap();
     if (tilemap) {
       this.buildTilemapLocation(tilemap);
+    } else if (this.hasLayeredLocation()) {
+      this.buildLayeredLocation();
     } else {
       this.buildGeneratedLocation();
     }
 
-    asArray(this.locationData.exits)
-      .filter((exit) => this.isExitEnabled(exit))
-      .forEach((exit) => this.createExit(exit));
+    const transitions = this.hasLayeredLocation() ? this.locationData.triggers : this.locationData.exits;
+    asArray(transitions)
+      .filter((transition) => this.isTransitionEnabled(transition))
+      .forEach((transition) => this.createTransition(transition));
+  }
+
+  buildLayeredLocation() {
+    const tileSize = this.getLocationTileSize();
+    const terrain = this.locationData.layers.terrain;
+    const rows = terrain.rows;
+    const widthTiles = this.locationData.width || rows[0].length;
+    const heightTiles = this.locationData.height || rows.length;
+    const baseSymbol = terrain.base || this.locationData.terrain?.base || rows.find(Boolean)?.[0] || ' ';
+
+    rows.forEach((row, y) => {
+      [...row].forEach((tile, x) => {
+        const worldX = x * tileSize;
+        const worldY = y * tileSize;
+        const def = terrain.legend?.[tile] || terrain.legend?.[baseSymbol] || {};
+
+        this.ground.fillStyle(toColor(def.color || this.locationData.background || FALLBACK_COLOR), 1);
+        this.ground.fillRect(worldX, worldY, tileSize, tileSize);
+
+        this.drawTileTexture(worldX, worldY, def, x, y, tileSize);
+
+        if (def.decoration === 'water') {
+          this.ground.fillStyle(0x60a5fa, 0.45);
+          this.ground.fillRect(worldX + 2, worldY + 2, tileSize - 4, tileSize - 4);
+        }
+
+        if (def.blocked || def.walkable === false) {
+          this.createMapBlocker(worldX, worldY, tileSize, tileSize);
+        }
+      });
+    });
+
+    this.renderEdgeLayer(this.locationData.layers.edges, tileSize);
+    this.renderObjectLayer(this.locationData.layers.boundaries, 20, tileSize);
+    this.renderObjectLayer(this.locationData.layers.props, 40, tileSize);
+    this.renderObjectLayer(this.locationData.layers.overPlayer, 600, tileSize);
+    this.renderCollisionRects(tileSize);
+
+    this.mapPixelWidth = widthTiles * tileSize;
+    this.mapPixelHeight = heightTiles * tileSize;
+    this.physics.world.setBounds(0, 0, this.mapPixelWidth, this.mapPixelHeight);
+  }
+
+  renderEdgeLayer(edgeLayer, tileSize) {
+    if (!edgeLayer?.legend || !Array.isArray(edgeLayer.rows)) {
+      return;
+    }
+
+    edgeLayer.rows.forEach((row, y) => {
+      [...row].forEach((symbol, x) => {
+        if (symbol === ' ') {
+          return;
+        }
+
+        const def = edgeLayer.legend[symbol];
+        if (!def) {
+          return;
+        }
+
+        this.createProp({
+          width: tileSize,
+          height: tileSize,
+          depth: 10,
+          ...def,
+          x,
+          y
+        });
+      });
+    });
+  }
+
+  renderObjectLayer(objects, defaultDepth, tileSize) {
+    asArray(objects).forEach((object) => {
+      this.createProp({ depth: defaultDepth, ...object });
+      this.createFootprintBlocker(object, tileSize);
+    });
+  }
+
+  renderCollisionRects(tileSize) {
+    asArray(this.locationData.collision?.rects).forEach((rect) => {
+      if (!Number.isFinite(rect?.x) || !Number.isFinite(rect?.y) || !Number.isFinite(rect?.w) || !Number.isFinite(rect?.h)) {
+        return;
+      }
+
+      this.createMapBlocker(rect.x * tileSize, rect.y * tileSize, rect.w * tileSize, rect.h * tileSize);
+    });
+  }
+
+  createFootprintBlocker(object, tileSize) {
+    const footprint = object?.footprint;
+    if (!footprint?.blocks) {
+      return;
+    }
+
+    const width = Math.max(footprint.w || 1, 0.25) * tileSize;
+    const height = Math.max(footprint.h || 1, 0.25) * tileSize;
+    const origin = footprint.origin || 'center';
+    let worldX = object.x * tileSize + tileSize / 2 - width / 2;
+    let worldY = object.y * tileSize + tileSize / 2 - height / 2;
+
+    if (origin === 'bottom-center') {
+      worldY = object.y * tileSize + tileSize - height;
+    }
+
+    this.createMapBlocker(worldX, worldY, width, height);
   }
 
   buildGeneratedLocation() {
     const { map } = this.locationData;
-    const width = map.tiles[0].length * TILE_SIZE;
-    const height = map.tiles.length * TILE_SIZE;
+    const tileSize = this.getLocationTileSize();
+    const width = map.tiles[0].length * tileSize;
+    const height = map.tiles.length * tileSize;
 
     map.tiles.forEach((row, y) => {
       [...row].forEach((tile, x) => {
-        const worldX = x * TILE_SIZE;
-        const worldY = y * TILE_SIZE;
+        const worldX = x * tileSize;
+        const worldY = y * tileSize;
         const def = map.legend[tile] || map.legend['.'];
 
         this.ground.fillStyle(toColor(def.color), 1);
-        this.ground.fillRect(worldX, worldY, TILE_SIZE, TILE_SIZE);
+        this.ground.fillRect(worldX, worldY, tileSize, tileSize);
 
-        this.drawTileTexture(worldX, worldY, def, x, y);
+        this.drawTileTexture(worldX, worldY, def, x, y, tileSize);
 
         if (def.decoration === 'water') {
           this.ground.fillStyle(0x60a5fa, 0.45);
-          this.ground.fillRect(worldX + 2, worldY + 2, TILE_SIZE - 4, TILE_SIZE - 4);
+          this.ground.fillRect(worldX + 2, worldY + 2, tileSize - 4, tileSize - 4);
         }
 
         if (def.blocked) {
-          this.createMapBlocker(worldX, worldY, TILE_SIZE, TILE_SIZE);
+          this.createMapBlocker(worldX, worldY, tileSize, tileSize);
         }
       });
     });
@@ -369,27 +475,7 @@ export class WorldScene extends Phaser.Scene {
     const height = tilemap.height || firstLayer?.rows?.length || this.locationData.map.tiles.length;
     const textureKey = this.getTilesetCacheKey(this.currentLocationId);
     const collisionTiles = new Set(asArray(tilemap.collisionLegend));
-    const tileDebug = this.collectTileDebugStats(tilemap);
-    const tilesetDebug = this.getTilesetDebugInfo(textureKey);
     let renderedTiles = 0;
-
-    this.logPubTilemapDebug('render:start', {
-      mapPath: this.locationData.tilemap?.mapPath,
-      tilesetPath: this.locationData.tilemap?.tilesetPath,
-      mapJsonLoaded: true,
-      tilesetImageLoaded: this.textures.exists(textureKey),
-      tileWidth: this.locationData.tilemap?.tileWidth || tileSize,
-      tileHeight: this.locationData.tilemap?.tileHeight || tileSize,
-      tileset: tilesetDebug,
-      mapWidthTiles: width,
-      mapHeightTiles: height,
-      layerCount: layers.length,
-      objectCount: asArray(tilemap.objects).length,
-      uniqueTileSymbols: tileDebug.uniqueTileSymbols,
-      uniqueFrameIds: tileDebug.uniqueFrameIds,
-      maxFrameIdUsed: tileDebug.maxFrameIdUsed,
-      first20TileIds: tileDebug.first20TileIds
-    });
 
     layers.forEach((layer, layerIndex) => {
       asArray(layer.rows).forEach((row, y) => {
@@ -416,17 +502,7 @@ export class WorldScene extends Phaser.Scene {
     this.mapPixelHeight = height * tileSize;
     this.physics.world.setBounds(0, 0, this.mapPixelWidth, this.mapPixelHeight);
 
-    this.logPubTilemapDebug('render:complete', {
-      renderedTiles,
-      layerCount: layers.length,
-      mapBoundsPixels: {
-        width: this.mapPixelWidth,
-        height: this.mapPixelHeight
-      },
-      tilesetFrameTotal: tilesetDebug?.frameTotal ?? null,
-      frameRangeLooksValid: !tilesetDebug || tileDebug.maxFrameIdUsed < tilesetDebug.frameTotal
-    });
-
+    this.logPubTilemapDebug('render:complete', { renderedTiles, layerCount: layers.length });
     this.drawPubTilemapDebugOverlay(tilemap, { width, height, tileSize });
   }
 
@@ -435,17 +511,13 @@ export class WorldScene extends Phaser.Scene {
     const mapKey = this.getTilemapCacheKey(this.currentLocationId);
     const tilesetKey = this.getTilesetCacheKey(this.currentLocationId);
     const tilemap = this.cache.json.get(mapKey);
-    const mapJsonLoaded = Boolean(tilemap);
     const tilesetImageLoaded = this.textures.exists(tilesetKey);
 
     this.logPubTilemapDebug('render:availability', {
       mapPath: config?.mapPath,
       tilesetPath: config?.tilesetPath,
-      mapJsonLoaded,
+      mapJsonLoaded: Boolean(tilemap),
       tilesetImageLoaded,
-      tileWidth: config?.tileWidth || TILE_SIZE,
-      tileHeight: config?.tileHeight || TILE_SIZE,
-      tileset: tilesetImageLoaded ? this.getTilesetDebugInfo(tilesetKey) : null,
       useTilemap: this.locationData.useTilemap === true
     });
 
@@ -462,48 +534,6 @@ export class WorldScene extends Phaser.Scene {
 
   getTilesetCacheKey(locationId) {
     return `tileset:${locationId}`;
-  }
-
-  getTilesetDebugInfo(textureKey) {
-    if (!this.textures.exists(textureKey)) {
-      return null;
-    }
-
-    const texture = this.textures.get(textureKey);
-    const source = texture.getSourceImage();
-    const frameNames = texture.getFrameNames().filter((frameName) => frameName !== '__BASE');
-
-    return {
-      textureKey,
-      imageWidth: source?.width ?? null,
-      imageHeight: source?.height ?? null,
-      frameTotal: frameNames.length,
-      firstFrameNames: frameNames.slice(0, 12)
-    };
-  }
-
-  collectTileDebugStats(tilemap) {
-    const symbols = [];
-    const frameIds = [];
-
-    asArray(tilemap.layers).forEach((layer) => {
-      asArray(layer.rows).forEach((row) => {
-        [...row].forEach((symbol) => {
-          const frame = tilemap.legend?.[symbol] ?? -1;
-          symbols.push(symbol);
-          if (frame >= 0) {
-            frameIds.push(frame);
-          }
-        });
-      });
-    });
-
-    return {
-      uniqueTileSymbols: [...new Set(symbols)],
-      uniqueFrameIds: [...new Set(frameIds)],
-      maxFrameIdUsed: frameIds.length > 0 ? Math.max(...frameIds) : -1,
-      first20TileIds: frameIds.slice(0, 20)
-    };
   }
 
   drawPubTilemapDebugOverlay(tilemap, { width, height, tileSize }) {
@@ -525,38 +555,6 @@ export class WorldScene extends Phaser.Scene {
 
     debug.lineStyle(2, 0x38bdf8, 0.95);
     debug.strokeRect(0, 0, pixelWidth, pixelHeight);
-
-    const spawn = this.getSpawnPoint(this.spawnPoint || this.locationData.playerSpawnPoint || 'default');
-    debug.lineStyle(2, 0x22c55e, 1);
-    debug.strokeRect(spawn.x * tileSize + 1, spawn.y * tileSize + 1, tileSize - 2, tileSize - 2);
-    this.add.text(spawn.x * tileSize + tileSize / 2, spawn.y * tileSize - 2, 'SPAWN', {
-      fontFamily: 'monospace',
-      fontSize: '5px',
-      color: '#bbf7d0',
-      backgroundColor: '#14532d'
-    }).setOrigin(0.5, 1).setDepth(701);
-
-    const doorTiles = [];
-    asArray(tilemap.layers).forEach((layer) => {
-      asArray(layer.rows).forEach((row, y) => {
-        [...row].forEach((tile, x) => {
-          if (tile === 'D') {
-            doorTiles.push({ x, y });
-          }
-        });
-      });
-    });
-
-    doorTiles.forEach((door) => {
-      debug.lineStyle(2, 0xfacc15, 1);
-      debug.strokeRect(door.x * tileSize + 2, door.y * tileSize + 2, tileSize - 4, tileSize - 4);
-      this.add.text(door.x * tileSize + tileSize / 2, door.y * tileSize + tileSize + 2, 'DOOR', {
-        fontFamily: 'monospace',
-        fontSize: '5px',
-        color: '#fef3c7',
-        backgroundColor: '#713f12'
-      }).setOrigin(0.5, 0).setDepth(701);
-    });
   }
 
   logPubTilemapDebug(label, payload) {
@@ -573,17 +571,17 @@ export class WorldScene extends Phaser.Scene {
     this.blockers.add(blocker);
   }
 
-  drawTileTexture(worldX, worldY, def, tileX, tileY) {
+  drawTileTexture(worldX, worldY, def, tileX, tileY, tileSize = TILE_SIZE) {
     if (def.texture === 'pub-floor') {
       const lineColor = toColor(def.lineColor || '#7c2d12');
       const highlightColor = toColor(def.highlightColor || '#a16207');
 
       this.ground.fillStyle(highlightColor, (tileX + tileY) % 2 === 0 ? 0.12 : 0.06);
-      this.ground.fillRect(worldX + 1, worldY + 1, TILE_SIZE - 2, 2);
+      this.ground.fillRect(worldX + 1, worldY + 1, tileSize - 2, 2);
       this.ground.lineStyle(1, lineColor, 0.35);
-      this.ground.lineBetween(worldX, worldY + 7, worldX + TILE_SIZE, worldY + 7);
+      this.ground.lineBetween(worldX, worldY + Math.floor(tileSize / 2), worldX + tileSize, worldY + Math.floor(tileSize / 2));
       this.ground.lineStyle(1, lineColor, 0.2);
-      this.ground.lineBetween(worldX + 8, worldY, worldX + 8, worldY + TILE_SIZE);
+      this.ground.lineBetween(worldX + Math.floor(tileSize / 2), worldY, worldX + Math.floor(tileSize / 2), worldY + tileSize);
       return;
     }
 
@@ -592,36 +590,43 @@ export class WorldScene extends Phaser.Scene {
       const highlightColor = toColor(def.highlightColor || '#78350f');
 
       this.ground.fillStyle(highlightColor, 0.18);
-      this.ground.fillRect(worldX + 2, worldY + 2, TILE_SIZE - 4, 2);
+      this.ground.fillRect(worldX + 2, worldY + 2, tileSize - 4, 2);
       this.ground.lineStyle(1, lineColor, 0.25);
-      this.ground.lineBetween(worldX, worldY + 8, worldX + TILE_SIZE, worldY + 8);
+      this.ground.lineBetween(worldX, worldY + Math.floor(tileSize / 2), worldX + tileSize, worldY + Math.floor(tileSize / 2));
     }
   }
 
-  isExitEnabled(exit) {
+  isTransitionEnabled(transition) {
+    if (transition?.type && transition.type !== 'transition') {
+      return false;
+    }
+
     if (this.currentLocationId === this.sceneData.destinationLocation) {
       return false;
     }
 
-    return !this.sceneData.destinationLocation || exit.targetLocation === this.sceneData.destinationLocation;
+    return !this.sceneData.destinationLocation || transition.targetLocation === this.sceneData.destinationLocation;
   }
 
-  createExit(exit) {
-    if (typeof exit?.x !== 'number' || typeof exit?.y !== 'number' || !exit.targetLocation) {
-      this.warnContent('Skipped an exit because it is missing x, y, or targetLocation.');
+  createTransition(transition) {
+    if (typeof transition?.x !== 'number' || typeof transition?.y !== 'number' || !transition.targetLocation) {
+      this.warnContent('Skipped a transition because it is missing x, y, or targetLocation.');
       return;
     }
 
+    const tileSize = this.getLocationTileSize();
+    const width = transition.w ? transition.w * tileSize : transition.width || tileSize;
+    const height = transition.h ? transition.h * tileSize : transition.height || tileSize;
     const door = this.add.rectangle(
-      exit.x * TILE_SIZE + 8,
-      exit.y * TILE_SIZE + 8,
-      exit.width || TILE_SIZE,
-      exit.height || TILE_SIZE,
-      toColor(exit.color || '#facc15'),
-      exit.alpha ?? 0.35
+      transition.x * tileSize + width / 2,
+      transition.y * tileSize + height / 2,
+      width,
+      height,
+      toColor(transition.color || '#facc15'),
+      transition.alpha ?? 0.35
     );
-    door.targetLocation = exit.targetLocation;
-    door.spawnPoint = exit.spawnPoint || 'default';
+    door.targetLocation = transition.targetLocation;
+    door.spawnPoint = transition.spawnPoint || 'default';
     this.physics.add.existing(door, true);
     this.doors.add(door);
   }
@@ -632,8 +637,9 @@ export class WorldScene extends Phaser.Scene {
       return;
     }
 
-    const x = prop.x * TILE_SIZE + TILE_SIZE / 2;
-    const y = prop.y * TILE_SIZE + TILE_SIZE / 2;
+    const tileSize = this.getLocationTileSize();
+    const x = prop.x * tileSize + tileSize / 2;
+    const y = prop.y * tileSize + tileSize / 2;
 
     if (prop.asset) {
       this.createAssetProp(x, y, prop);
@@ -663,6 +669,8 @@ export class WorldScene extends Phaser.Scene {
 
     if (typeof prop.width === 'number' && typeof prop.height === 'number') {
       image.setDisplaySize(prop.width * propScale, prop.height * propScale);
+    } else if (prop.visual?.w && prop.visual?.h) {
+      image.setDisplaySize(prop.visual.w * propScale, prop.visual.h * propScale);
     } else if (typeof prop.scale === 'number') {
       image.setScale(prop.scale * propScale);
     } else if (propScale !== 1) {
@@ -710,8 +718,8 @@ export class WorldScene extends Phaser.Scene {
 
   createGeneratedShapeProp(x, y, prop) {
     const propScale = this.getPropRenderScale(prop);
-    const width = (prop.width || 8) * propScale;
-    const height = (prop.height || 8) * propScale;
+    const width = (prop.width || prop.visual?.w || 8) * propScale;
+    const height = (prop.height || prop.visual?.h || 8) * propScale;
     const sprite = this.add.rectangle(x, y, width, height, toColor(prop.color || '#ffffff'));
     sprite.setDepth(prop.depth ?? 0);
     sprite.setStrokeStyle(1, toColor(prop.outline || '#111827'));
@@ -788,8 +796,9 @@ export class WorldScene extends Phaser.Scene {
 
   createPlayer() {
     const spawn = this.getSpawnPoint(this.spawnPoint || this.locationData.playerSpawnPoint || 'default');
+    const tileSize = this.getLocationTileSize();
     const characterScale = this.getCharacterScale();
-    this.player = this.add.container(spawn.x * TILE_SIZE + 8, spawn.y * TILE_SIZE + 8);
+    this.player = this.add.container(spawn.x * tileSize + tileSize / 2, spawn.y * tileSize + tileSize / 2).setDepth(100);
     this.physics.add.existing(this.player);
     this.player.setScale(characterScale);
     this.player.body.setSize(7 * characterScale, 7 * characterScale);
@@ -808,15 +817,19 @@ export class WorldScene extends Phaser.Scene {
   }
 
   getSpawnPoint(name) {
-    return this.locationData.playerSpawns?.[name] || this.locationData.playerSpawns?.default || { x: 2, y: 2 };
+    return this.locationData.spawns?.player?.[name]
+      || this.locationData.playerSpawns?.[name]
+      || this.locationData.playerSpawns?.default
+      || { x: 2, y: 2 };
   }
 
   createNpcs() {
     this.npcs = this.physics.add.group();
+    const tileSize = this.getLocationTileSize();
     const characterScale = this.getCharacterScale();
 
     this.characterData.forEach((character, actorId) => {
-      const spawn = this.locationData.npcSpawnPoints?.[character.spawnPoint];
+      const spawn = this.locationData.spawns?.npcs?.[character.spawnPoint] || this.locationData.npcSpawnPoints?.[character.spawnPoint];
       if (!spawn) {
         if (this.currentLocationId === this.sceneData.destinationLocation) {
           return;
@@ -826,7 +839,7 @@ export class WorldScene extends Phaser.Scene {
         return;
       }
 
-      const npc = this.add.container(spawn.x * TILE_SIZE + 8, spawn.y * TILE_SIZE + 8);
+      const npc = this.add.container(spawn.x * tileSize + tileSize / 2, spawn.y * tileSize + tileSize / 2).setDepth(100);
       this.physics.add.existing(npc);
       npc.actorId = actorId;
       npc.name = character.name;
@@ -913,8 +926,8 @@ export class WorldScene extends Phaser.Scene {
   }
 
   createCamera() {
-    const mapWidth = this.mapPixelWidth || this.locationData.map.tiles[0].length * TILE_SIZE;
-    const mapHeight = this.mapPixelHeight || this.locationData.map.tiles.length * TILE_SIZE;
+    const mapWidth = this.mapPixelWidth || this.locationData.map.tiles[0].length * this.getLocationTileSize();
+    const mapHeight = this.mapPixelHeight || this.locationData.map.tiles.length * this.getLocationTileSize();
 
     this.cameras.main.setBounds(0, 0, mapWidth, mapHeight);
     this.cameras.main.setZoom(this.getCameraZoom());
@@ -922,12 +935,12 @@ export class WorldScene extends Phaser.Scene {
   }
 
   getCameraZoom() {
-    const requestedZoom = this.locationData.cameraZoom ?? this.sceneData.camera?.zoom;
+    const requestedZoom = this.locationData.display?.cameraZoom ?? this.locationData.cameraZoom ?? this.sceneData.camera?.zoom;
     return clampSetting(requestedZoom, MIN_CAMERA_ZOOM, MAX_CAMERA_ZOOM, DEFAULT_CAMERA_ZOOM);
   }
 
   getPropScaleMultiplier() {
-    return clampSetting(this.locationData.propScaleMultiplier, MIN_PROP_SCALE_MULTIPLIER, MAX_PROP_SCALE_MULTIPLIER, 1);
+    return clampSetting(this.locationData.display?.propScaleMultiplier ?? this.locationData.propScaleMultiplier, MIN_PROP_SCALE_MULTIPLIER, MAX_PROP_SCALE_MULTIPLIER, 1);
   }
 
   getPropRenderScale(prop = {}) {
@@ -936,7 +949,7 @@ export class WorldScene extends Phaser.Scene {
   }
 
   getCharacterScale() {
-    return clampSetting(this.locationData.playerScale, MIN_CHARACTER_SCALE, MAX_CHARACTER_SCALE, 1);
+    return clampSetting(this.locationData.display?.playerScale ?? this.locationData.playerScale, MIN_CHARACTER_SCALE, MAX_CHARACTER_SCALE, 1);
   }
 
   movePlayer() {
@@ -988,6 +1001,7 @@ export class WorldScene extends Phaser.Scene {
   }
 
   startScriptedMovementsFor(actorId) {
+    const tileSize = this.getLocationTileSize();
     asArray(this.sceneData.scriptedMovements)
       .filter((movement) => movement.actor === actorId && movement.trigger === 'afterDialogue')
       .forEach((movement) => {
@@ -997,8 +1011,8 @@ export class WorldScene extends Phaser.Scene {
         }
 
         actor.path = asArray(movement.path).map((point) => ({
-          x: point.x * TILE_SIZE + 8,
-          y: point.y * TILE_SIZE + 8
+          x: point.x * tileSize + tileSize / 2,
+          y: point.y * tileSize + tileSize / 2
         })).filter((point) => Number.isFinite(point.x) && Number.isFinite(point.y));
         actor.pathIndex = 0;
         if (actor.path.length > 0) {
@@ -1100,6 +1114,7 @@ export class WorldScene extends Phaser.Scene {
     return {
       exits: [],
       props: [],
+      triggers: [],
       npcSpawnPoints: {},
       playerSpawns: { default: { x: 2, y: 2 } },
       useTilemap: false,
@@ -1110,7 +1125,6 @@ export class WorldScene extends Phaser.Scene {
   getCharacterData() {
     const characters = new Map();
 
-    // Scene actor IDs are per-video roles that point to reusable character files.
     asArray(this.sceneData.participatingCharacters).forEach((entry) => {
       if (!entry?.id || !entry?.character) {
         this.warnContent('Skipped a participating character because it is missing id or character.');
