@@ -13,9 +13,10 @@
 
 ## Architecture Status
 
-- `ARCHITECTURE_REVIEW.md` now captures the current runtime, asset, and scene-building architecture.
-- The recommended next architecture task is to formalise a location layer model before doing more local visual/layout fixes.
-- The target model separates terrain, boundaries, props, actors, triggers, camera/display settings, and layout grammar while keeping the existing JSON-first video workflow.
+- `ARCHITECTURE_REVIEW.md` captures the current runtime, asset, and scene-building architecture.
+- `REFERENCE_MAP_ARCHITECTURE.md` compares the current project to practical Pokemon Platinum-style and Stardew Valley-style map architecture principles.
+- The recommended next architecture task is to write `TARGET_MAP_ARCHITECTURE.md` as the project-specific contract for map layers, roles, footprints, triggers, collision, and backward compatibility.
+- The target model separates terrain, edges, boundaries, props, over-player visuals, actors, triggers, camera/display settings, and layout grammar while keeping the existing JSON-first video workflow.
 
 ## Pub Friend Flow
 
@@ -125,4 +126,4 @@ GitHub Actions validation/build exists through `.github/workflows/validate.yml`,
 
 ## Next Recommended Task
 
-Formalise the target location layer model described in `ARCHITECTURE_REVIEW.md` before doing more local scene polish. The next implementation should document and validate the layer shape while preserving current rendering behavior.
+Write `TARGET_MAP_ARCHITECTURE.md` from `REFERENCE_MAP_ARCHITECTURE.md` before changing runtime code or converting locations. The target document should define the exact location layer contract, object roles, footprints, triggers, collision, and compatibility rules.
