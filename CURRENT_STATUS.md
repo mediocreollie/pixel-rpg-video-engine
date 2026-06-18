@@ -11,6 +11,12 @@
 - `H` hides or shows the recording overlay and persists that setting.
 - `?` opens the controls screen.
 
+## Architecture Status
+
+- `ARCHITECTURE_REVIEW.md` now captures the current runtime, asset, and scene-building architecture.
+- The recommended next architecture task is to formalise a location layer model before doing more local visual/layout fixes.
+- The target model separates terrain, boundaries, props, actors, triggers, camera/display settings, and layout grammar while keeping the existing JSON-first video workflow.
+
 ## Pub Friend Flow
 
 - `Pub Friend` starts in `public/locations/town.json`.
@@ -119,4 +125,4 @@ GitHub Actions validation/build exists through `.github/workflows/validate.yml`,
 
 ## Next Recommended Task
 
-Run CI or local validation once the command runner is available, then visually test Pub Friend in vertical framing to confirm the Town Edge Route v2 grid terrain reads before adding any further decoration.
+Formalise the target location layer model described in `ARCHITECTURE_REVIEW.md` before doing more local scene polish. The next implementation should document and validate the layer shape while preserving current rendering behavior.
