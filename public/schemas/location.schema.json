@@ -63,6 +63,17 @@
           "items": { "type": "string" }
         }
       }
+    },
+    "terrain": {
+      "type": "object",
+      "properties": {
+        "tileSize": { "type": "number" },
+        "base": { "type": "string" },
+        "rows": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
     }
   }
 }
