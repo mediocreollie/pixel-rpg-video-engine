@@ -5,10 +5,20 @@
   "background": "#86efac",
   "musicPath": "",
   "ambiencePath": "",
+  "tileSize": 16,
+  "width": 24,
+  "height": 14,
+  "assetPacks": ["outside-route", "outside-route-additional"],
   "propAssetPack": "outside-route",
   "cameraZoom": 1.45,
   "playerScale": 0.9,
   "propScaleMultiplier": 0.78,
+  "display": {
+    "cameraZoom": 1.45,
+    "playerScale": 0.9,
+    "propScaleMultiplier": 0.78,
+    "cameraMode": "playerFollow"
+  },
   "playerSpawnPoint": "default",
   "playerSpawns": {
     "default": { "x": 2, "y": 7 }
@@ -16,13 +26,21 @@
   "npcSpawnPoints": {
     "townCenter": { "x": 4, "y": 7 }
   },
+  "spawns": {
+    "player": {
+      "default": { "x": 2, "y": 7 }
+    },
+    "npcs": {
+      "townCenter": { "x": 4, "y": 7 }
+    }
+  },
   "map": {
     "legend": {
-      "G": { "color": "#86efac" },
-      "P": { "color": "#d9b77d" },
-      "S": { "color": "#c7b7a3" },
-      "B": { "color": "#8b5a2b" },
-      "D": { "color": "#facc15" },
+      "G": { "color": "#86efac", "walkable": true },
+      "P": { "color": "#d9b77d", "walkable": true },
+      "S": { "color": "#c7b7a3", "walkable": true },
+      "B": { "color": "#8b5a2b", "blocked": true },
+      "D": { "color": "#facc15", "walkable": true },
       "#": { "color": "#31572c", "blocked": true }
     },
     "tiles": [
@@ -62,6 +80,127 @@
       "########################"
     ]
   },
+  "layers": {
+    "terrain": {
+      "tileSize": 16,
+      "base": "G",
+      "legend": {
+        "G": { "role": "grass", "color": "#86efac", "walkable": true },
+        "P": { "role": "path", "assetPack": "outside-route", "asset": "sand_path_tile.png", "color": "#d9b77d", "walkable": true },
+        "S": { "role": "foundation", "assetPack": "outside-route", "asset": "pavement_tiles.png", "color": "#c7b7a3", "walkable": true },
+        "B": { "role": "building", "color": "#8b5a2b", "blocked": true },
+        "D": { "role": "doorstep", "color": "#facc15", "walkable": true },
+        "#": { "role": "boundary", "color": "#31572c", "blocked": true }
+      },
+      "rows": [
+        "########################",
+        "#GGGGGGGGGGGGGGGGGGGGGG#",
+        "#GGGGGGGGGGGGGGGGGGGGGG#",
+        "#GGGGGGGGGGGGGGGGGGGGGG#",
+        "#GGGGGGGGGGGGGGGGGBBBGG#",
+        "#GGGGGGGGGGGGGGGGGBDBGG#",
+        "#PPPPPPPPPPPPPPPPSSDBGG#",
+        "#PPPPPPPPPPPPPPPPPSSBGG#",
+        "#GPPPPPPPPPPPPPPPSSBBGG#",
+        "#GGGGGGGGGGGGGGGGGBBBGG#",
+        "#GGGGGGGGGGGGGGGGGGGGGG#",
+        "#GGGGGGGGGGGGGGGGGGGGGG#",
+        "#GGGGGGGGGGGGGGGGGGGGGG#",
+        "########################"
+      ]
+    },
+    "edges": {
+      "legend": {
+        "h": { "role": "path-edge", "assetPack": "outside-route-additional", "asset": "path_edge_thin_mid.png", "width": 16, "height": 8, "alpha": 0.32, "color": "#c79b61", "outline": "#a16207" }
+      },
+      "rows": [
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                hhh     ",
+        " hhhhhhhhhhhhhhhh       ",
+        " hhhhhhhhhhhhhhhhh      ",
+        "  hhhhhhhhhhhhhhh       ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        ",
+        "                        "
+      ]
+    },
+    "boundaries": [
+      { "role": "destination-building", "asset": "brick_wall.png", "x": 18.7, "y": 4.55, "width": 74, "height": 50, "color": "#991b1b", "outline": "#450a0a" },
+      { "role": "destination-door", "asset": "arched_doorway.png", "fallbackKind": "door", "x": 19, "y": 6, "width": 24, "height": 34, "color": "#facc15", "outline": "#713f12" },
+      { "role": "building-window", "asset": "window_flowerbox.png", "x": 16.8, "y": 4.55, "width": 20, "height": 22, "color": "#60a5fa", "outline": "#422006" },
+      { "role": "building-window", "asset": "window_flowerbox.png", "x": 20.2, "y": 4.55, "width": 20, "height": 22, "color": "#60a5fa", "outline": "#422006" },
+      { "role": "tree-wall", "asset": "small_tree.png", "x": 2, "y": 3.15, "width": 31, "height": 45, "color": "#166534", "outline": "#052e16", "footprint": { "w": 1, "h": 1, "blocks": true } },
+      { "role": "tree-wall", "asset": "pine_tree.png", "x": 3.75, "y": 2.7, "width": 32, "height": 54, "color": "#166534", "outline": "#052e16", "footprint": { "w": 1, "h": 1, "blocks": true } },
+      { "role": "tree-wall", "asset": "small_tree.png", "x": 5.35, "y": 3.3, "width": 30, "height": 44, "color": "#166534", "outline": "#052e16", "footprint": { "w": 1, "h": 1, "blocks": true } },
+      { "role": "hedge-guide", "asset": "hedge_long.png", "x": 3.75, "y": 5, "width": 62, "height": 22, "color": "#166534", "outline": "#052e16", "footprint": { "w": 4, "h": 1, "blocks": true } },
+      { "role": "upper-boundary", "asset": "hedge_long.png", "x": 10.8, "y": 2.35, "width": 58, "height": 22, "color": "#166534", "outline": "#052e16", "footprint": { "w": 4, "h": 1, "blocks": true } },
+      { "role": "lower-boundary", "asset": "wooden_fence_section.png", "x": 12.3, "y": 11.1, "width": 64, "height": 16, "color": "#854d0e", "outline": "#422006", "footprint": { "w": 4, "h": 1, "blocks": true } },
+      { "role": "lower-boundary", "asset": "bush_large.png", "x": 4.4, "y": 10.1, "width": 24, "height": 24, "color": "#166534", "outline": "#052e16", "footprint": { "w": 1, "h": 1, "blocks": true } },
+      { "role": "lower-boundary", "assetPack": "outside-route-additional", "asset": "bush_small.png", "x": 6, "y": 10.7, "width": 15, "height": 13, "alpha": 0.9, "color": "#166534", "outline": "#052e16" },
+      { "role": "pub-edge-softener", "asset": "round_bush.png", "x": 15.4, "y": 10.35, "width": 22, "height": 20, "color": "#166534", "outline": "#052e16" },
+      { "role": "pub-edge-softener", "asset": "large_rock.png", "x": 20.7, "y": 10.4, "width": 22, "height": 18, "color": "#78716c", "outline": "#44403c" }
+    ],
+    "props": [
+      { "role": "destination-cue", "asset": "route_sign_201.png", "x": 16, "y": 6.05, "width": 17, "height": 23, "color": "#facc15", "outline": "#713f12" },
+      { "role": "destination-highlight", "asset": "lamp_post.png", "x": 17.2, "y": 5.95, "width": 12, "height": 32, "color": "#facc15", "outline": "#374151" },
+      { "role": "path-rest", "asset": "bench.png", "x": 9.7, "y": 10.2, "width": 34, "height": 18, "color": "#854d0e", "outline": "#422006" },
+      { "role": "building-shadow", "assetPack": "outside-route-additional", "asset": "building_shadow_strip.png", "x": 18.6, "y": 5.55, "width": 72, "height": 10, "alpha": 0.48, "color": "#365314", "outline": "#1f2937" },
+      { "role": "door-shadow", "assetPack": "outside-route-additional", "asset": "doorway_shadow.png", "x": 19, "y": 6.45, "width": 26, "height": 10, "alpha": 0.55, "color": "#365314", "outline": "#1f2937" },
+      { "role": "pub-side-clutter", "asset": "barrel.png", "x": 21, "y": 7.5, "width": 16, "height": 18, "color": "#854d0e", "outline": "#422006" },
+      { "role": "pub-side-clutter", "asset": "crate.png", "x": 20.45, "y": 8.35, "width": 16, "height": 14, "color": "#854d0e", "outline": "#422006" },
+      { "role": "edge-detail", "assetPack": "outside-route-additional", "asset": "grass_tuft_1.png", "x": 6.6, "y": 5.85, "width": 10, "height": 8, "alpha": 0.75, "color": "#166534", "outline": "#052e16" },
+      { "role": "edge-detail", "assetPack": "outside-route-additional", "asset": "grass_tuft_3.png", "x": 12.7, "y": 8.75, "width": 11, "height": 8, "alpha": 0.7, "color": "#166534", "outline": "#052e16" },
+      { "role": "edge-flower", "assetPack": "outside-route-additional", "asset": "flower_tiny_white.png", "x": 5.35, "y": 10.85, "width": 7, "height": 7, "alpha": 0.9, "color": "#f8fafc", "outline": "#166534" },
+      { "role": "edge-flower", "assetPack": "outside-route-additional", "asset": "flower_tiny_yellow.png", "x": 15.2, "y": 9.35, "width": 7, "height": 7, "alpha": 0.88, "color": "#facc15", "outline": "#166534" },
+      { "role": "edge-flower", "assetPack": "outside-route-additional", "asset": "flower_tiny_pink.png", "x": 17.3, "y": 7.65, "width": 7, "height": 7, "alpha": 0.85, "color": "#f9a8d4", "outline": "#166534" }
+    ],
+    "overPlayer": []
+  },
+  "collision": {
+    "fromTerrain": true,
+    "fromFootprints": true,
+    "rects": []
+  },
+  "triggers": [
+    {
+      "id": "pubDoor",
+      "type": "transition",
+      "x": 19,
+      "y": 6,
+      "w": 1,
+      "h": 1,
+      "targetLocation": "pub",
+      "spawnPoint": "door",
+      "color": "#facc15",
+      "alpha": 0.55
+    },
+    {
+      "id": "beachPath",
+      "type": "transition",
+      "x": 2,
+      "y": 9,
+      "w": 1,
+      "h": 1,
+      "targetLocation": "beach",
+      "spawnPoint": "path"
+    },
+    {
+      "id": "gymDoor",
+      "type": "transition",
+      "x": 21,
+      "y": 10,
+      "w": 1,
+      "h": 1,
+      "targetLocation": "gym",
+      "spawnPoint": "door"
+    }
+  ],
   "exits": [
     {
       "id": "pubDoor",
@@ -87,38 +226,5 @@
       "spawnPoint": "door"
     }
   ],
-  "props": [
-    { "asset": "brick_wall.png", "x": 18.4, "y": 4.55, "width": 76, "height": 50, "depth": 1, "color": "#991b1b", "outline": "#450a0a" },
-    { "asset": "arched_doorway.png", "fallbackKind": "door", "x": 19.0, "y": 6.0, "width": 24, "height": 34, "depth": 3, "color": "#facc15", "outline": "#713f12" },
-    { "asset": "window_flowerbox.png", "x": 16.8, "y": 4.55, "width": 20, "height": 22, "depth": 2, "color": "#60a5fa", "outline": "#422006" },
-    { "asset": "window_flowerbox.png", "x": 20.2, "y": 4.55, "width": 20, "height": 22, "depth": 2, "color": "#60a5fa", "outline": "#422006" },
-    { "asset": "route_sign_201.png", "x": 16.0, "y": 6.05, "width": 17, "height": 23, "depth": 3, "color": "#facc15", "outline": "#713f12" },
-    { "asset": "lamp_post.png", "x": 17.2, "y": 5.95, "width": 12, "height": 32, "depth": 3, "color": "#facc15", "outline": "#374151" },
-
-    { "assetPack": "outside-route-additional", "asset": "path_edge_thin_mid.png", "x": 6.0, "y": 5.95, "width": 46, "height": 8, "depth": 1, "alpha": 0.45, "color": "#c79b61", "outline": "#a16207" },
-    { "assetPack": "outside-route-additional", "asset": "path_edge_thin_alt.png", "x": 13.2, "y": 8.95, "width": 42, "height": 8, "depth": 1, "alpha": 0.42, "color": "#c79b61", "outline": "#a16207" },
-    { "assetPack": "outside-route-additional", "asset": "building_shadow_strip.png", "x": 18.6, "y": 5.55, "width": 72, "height": 10, "depth": 1, "alpha": 0.48, "color": "#365314", "outline": "#1f2937" },
-    { "assetPack": "outside-route-additional", "asset": "doorway_shadow.png", "x": 19.0, "y": 6.45, "width": 26, "height": 10, "depth": 1, "alpha": 0.55, "color": "#365314", "outline": "#1f2937" },
-
-    { "asset": "small_tree.png", "x": 2.0, "y": 3.15, "width": 31, "height": 45, "depth": 2, "color": "#166534", "outline": "#052e16" },
-    { "asset": "pine_tree.png", "x": 3.75, "y": 2.7, "width": 32, "height": 54, "depth": 2, "color": "#166534", "outline": "#052e16" },
-    { "asset": "small_tree.png", "x": 5.35, "y": 3.3, "width": 30, "height": 44, "depth": 2, "color": "#166534", "outline": "#052e16" },
-    { "asset": "hedge_long.png", "x": 3.75, "y": 5.0, "width": 62, "height": 22, "depth": 2, "color": "#166534", "outline": "#052e16" },
-    { "asset": "hedge_long.png", "x": 10.8, "y": 2.35, "width": 58, "height": 22, "depth": 2, "color": "#166534", "outline": "#052e16" },
-    { "asset": "wooden_fence_section.png", "x": 12.3, "y": 11.1, "width": 64, "height": 16, "depth": 2, "color": "#854d0e", "outline": "#422006" },
-    { "asset": "bush_large.png", "x": 4.4, "y": 10.1, "width": 24, "height": 24, "depth": 2, "color": "#166534", "outline": "#052e16" },
-    { "assetPack": "outside-route-additional", "asset": "bush_small.png", "x": 6.0, "y": 10.7, "width": 15, "height": 13, "depth": 2, "alpha": 0.9, "color": "#166534", "outline": "#052e16" },
-    { "asset": "round_bush.png", "x": 15.4, "y": 10.35, "width": 22, "height": 20, "depth": 2, "color": "#166534", "outline": "#052e16" },
-    { "asset": "large_rock.png", "x": 20.7, "y": 10.4, "width": 22, "height": 18, "depth": 2, "color": "#78716c", "outline": "#44403c" },
-
-    { "asset": "bench.png", "x": 9.7, "y": 10.2, "width": 34, "height": 18, "depth": 3, "color": "#854d0e", "outline": "#422006" },
-    { "asset": "barrel.png", "x": 21.0, "y": 7.5, "width": 16, "height": 18, "depth": 3, "color": "#854d0e", "outline": "#422006" },
-    { "asset": "crate.png", "x": 20.45, "y": 8.35, "width": 16, "height": 14, "depth": 3, "color": "#854d0e", "outline": "#422006" },
-
-    { "assetPack": "outside-route-additional", "asset": "grass_tuft_1.png", "x": 6.6, "y": 5.85, "width": 10, "height": 8, "depth": 1, "alpha": 0.75, "color": "#166534", "outline": "#052e16" },
-    { "assetPack": "outside-route-additional", "asset": "grass_tuft_3.png", "x": 12.7, "y": 8.75, "width": 11, "height": 8, "depth": 1, "alpha": 0.7, "color": "#166534", "outline": "#052e16" },
-    { "assetPack": "outside-route-additional", "asset": "flower_tiny_white.png", "x": 5.35, "y": 10.85, "width": 7, "height": 7, "depth": 3, "alpha": 0.9, "color": "#f8fafc", "outline": "#166534" },
-    { "assetPack": "outside-route-additional", "asset": "flower_tiny_yellow.png", "x": 15.2, "y": 9.35, "width": 7, "height": 7, "depth": 3, "alpha": 0.88, "color": "#facc15", "outline": "#166534" },
-    { "assetPack": "outside-route-additional", "asset": "flower_tiny_pink.png", "x": 17.3, "y": 7.65, "width": 7, "height": 7, "depth": 3, "alpha": 0.85, "color": "#f9a8d4", "outline": "#166534" }
-  ]
+  "props": []
 }
